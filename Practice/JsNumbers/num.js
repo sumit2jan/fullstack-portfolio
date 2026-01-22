@@ -45,3 +45,64 @@ Number.isSafeInteger()
 Number.parseInt()
 Number.parseFloat()
  */
+
+
+// Bitwise Operators
+
+//AND returns 1 only if both bits are 1:
+let d = 5 & 3;
+console.log(d);
+//Bitwise OR returns 1 if one of the bits is 1:
+d = 5|3;
+console.log(d);
+//Bitwise XOR returns 1 if the bits are different:
+d = 5^3;
+console.log(d);
+
+//Bitwise NOT (~)
+console.log(~5);
+
+/*Types of Bitwise Shift Operators
+Operator	Name	Symbol
+Left Shift	Shift bits to the left	<<
+Right Shift (Signed)	Shift bits to the right (keeps sign)	>>
+Right Shift (Unsigned)	Shift bits to the right (fills with 0)	>>> */
+
+let num = 8;   // Binary: 00001000
+
+console.log(num << 1);  // 16 → shift left (multiply by 2)
+console.log(num >> 1);  // 4  → shift right (divide by 2)
+console.log(num >>> 1); // 4  → same for positive numbers
+
+let neg = -8;
+console.log(neg >> 1);   // -4 → sign preserved
+console.log(neg >>> 1);  // Large positive number
+
+// conversion decimal to binary and binary to decimal
+let decimalNum = 25;
+
+// Decimal → Binary
+let binaryNum = decimalNum.toString(2);
+console.log("Decimal to Binary:", binaryNum);
+
+// Binary → Decimal
+let binaryStr = "11001";
+let decimalValue = parseInt(binaryStr, 2);
+console.log("Binary to Decimal:", decimalValue);
+
+
+
+/*How to Create a BigInt
+You can create a BigInt in two ways:
+
+Using an integer literal with an n suffix
+Using the BigInt() constructor with a string */
+
+// Using an integer literal with an n suffix:
+let e = 999999999999999n;
+
+// Using the BigInt() constructor with a string:
+let f = BigInt("999999999999999");
+
+
+//You cannot mix BigInt and Number directly: To fix that, explicitly convert one:
