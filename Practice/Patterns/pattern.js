@@ -99,7 +99,7 @@ for(let i=1; i<=n; i++){
     }
     console.log(line);
 }
-for(let i=n; i>=1; i--){
+for(let i=n-1; i>=1; i--){
     let line = "";
     for(let j=1; j<=i; j++){
         line += "*";
