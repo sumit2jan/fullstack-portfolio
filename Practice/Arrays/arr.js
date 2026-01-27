@@ -48,3 +48,7 @@ for (let i = 0; i < dates.length; i++) {
     }
     console.log(dates[i]);
 }
+
+// adding the arrays
+arr.push(34);
+console.log(arr);
