@@ -52,3 +52,22 @@ for (let i = 0; i < dates.length; i++) {
 // adding the arrays
 arr.push(34);
 console.log(arr);
+
+/*The Difference Between Arrays and Objects
+
+In JavaScript, arrays use numbered indexes.  
+
+In JavaScript, objects use named indexes.
+*/
+
+
+//Nested Arrays and Objects
+const myObj = {
+  name: "John",
+  age: 30,
+  cars: [
+    {name:"Ford", models:["Fiesta", "Focus", "Mustang"]},
+    {name:"BMW", models:["320", "X3", "X5"]},
+    {name:"Fiat", models:["500", "Panda"]}
+  ]
+}
