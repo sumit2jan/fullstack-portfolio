@@ -110,22 +110,22 @@ Use pop() or shift() instead. */
 // --- THE DATASET ---
 // We use an array with duplicates to clearly see the difference
 // between "first" (left-to-right) and "last" (right-to-left) searches.
-const numbers = [5, 12, 8, 130, 12, 44];
+const numberss = [5, 12, 8, 130, 12, 44];
 // Indices:      0   1  2    3   4   5
 
 // --- 1. EXACT VALUE SEARCHES 
 // indexOf(): Scans from start -> end. Finds the FIRST occurrence of 12.
-const index = numbers.indexOf(12);
+const index = numberss.indexOf(12);
 console.log("indexOf(12):", index); 
 // Output: 1
 
 // lastIndexOf(): Scans from end -> start. Finds the LAST occurrence of 12.
-const lastIndex = numbers.lastIndexOf(12);
+const lastIndex = numberss.lastIndexOf(12);
 console.log("lastIndexOf(12):", lastIndex); 
 // Output: 4
 
 // includes(): Returns true if found, false if not.
-const hasValue = numbers.includes(130);
+const hasValue = numberss.includes(130);
 console.log("includes(130):", hasValue); 
 // Output: true
 
@@ -134,27 +134,139 @@ console.log("includes(130):", hasValue);
 
 // find(): Returns the actual VALUE of the first item matching the rule.
 // Rule: "Find the first number greater than 10"
-const foundValue = numbers.find(x => x > 10);
+const foundValue = numberss.find(x => x > 10);
 console.log("find(x > 10):", foundValue); 
 // Output: 12 (Stops at index 1)
 
 // findIndex(): Returns the INDEX of the first item matching the rule.
 // Rule: "Find the index of the first number greater than 10"
-const foundIdx = numbers.findIndex(x => x > 10);
+const foundIdx = numberss.findIndex(x => x > 10);
 console.log("findIndex(x > 10):", foundIdx); 
 // Output: 1
 
 // findLast(): Returns the VALUE of the last item matching the rule.
 // Rule: "Find the last number greater than 10" (Scans backwards)
-const foundLastVal = numbers.findLast(x => x > 10);
+const foundLastVal = numberss.findLast(x => x > 10);
 console.log("findLast(x > 10):", foundLastVal); 
 // Output: 44 (Stops at index 5)
 
 // findLastIndex(): Returns the INDEX of the last item matching the rule.
 // Rule: "Find the index of the last number greater than 10"
-const foundLastIdx = numbers.findLastIndex(x => x > 10);
+const foundLastIdx = numberss.findLastIndex(x => x > 10);
 console.log("findLastIndex(x > 10):", foundLastIdx); 
 // Output: 5
+
+// --- DATASETS ---
+// We will use these arrays for the examples
+let fruits = ["Banana", "Orange", "Apple", "Mango"];
+const numbers = [40, 100, 1, 5, 25, 10];
+
+// --- 1. ALPHABETIC SORT & REVERSE (Mutating) ---
+
+// Array.sort(): Sorts strings alphabetically by default.
+// WARNING: This changes 'fruits' directly.
+fruits.sort();
+console.log("Alphabetic Sort:", fruits);
+// Output: ['Apple', 'Banana', 'Mango', 'Orange']
+
+// Array.reverse(): Reverses the order of elements.
+// WARNING: This also changes 'fruits' directly.
+fruits.reverse();
+console.log("Reverse:", fruits);
+// Output: ['Orange', 'Mango', 'Banana', 'Apple']
+
+
+// --- 2. MODERN IMMUTABLE SORTS (New in ES2023) ---
+// These create a NEW array and leave the original untouched.
+
+const original = ["C", "A", "B"];
+
+// Array.toSorted(): Returns a new sorted array.
+const sortedCopy = original.toSorted();
+console.log("toSorted():", sortedCopy); // ['A', 'B', 'C']
+console.log("Original:", original);     // ['C', 'A', 'B'] (Unchanged)
+
+// Array.toReversed(): Returns a new reversed array.
+const reversedCopy = original.toReversed();
+console.log("toReversed():", reversedCopy); // ['B', 'A', 'C']
+
+
+// --- 3. NUMERIC SORT ---
+// Default .sort() treats numbers as strings ("25" is bigger than "100" because "2" > "1").
+// You MUST provide a compare function (a - b) to sort numbers correctly.
+
+// Ascending (Small to Big)
+// We use a copy [...numbers] so we don't ruin the original for later examples.
+const numericAsc = [...numbers].sort((a, b) => a - b);
+console.log("Numeric Sort (Asc):", numericAsc);
+// Output: [1, 5, 10, 25, 40, 100]
+
+// Descending (Big to Small)
+const numericDesc = [...numbers].sort((a, b) => b - a);
+console.log("Numeric Sort (Desc):", numericDesc);
+// Output: [100, 40, 25, 10, 5, 1]
+
+
+// --- 4. SORTING OBJECTS ---
+// Sorting an array of objects based on a property (e.g., year).
+
+const cars = [
+  { type: "Volvo", year: 2016 },
+  { type: "Saab", year: 2001 },
+  { type: "BMW", year: 2010 }
+];
+
+// Logic: Compare a.year vs b.year
+cars.sort((a, b) => a.year - b.year);
+console.log("Sorted Objects (by year):", cars);
+// Output: Saab (2001), BMW (2010), Volvo (2016)
+
+
+// --- 5. RANDOM SORT ---
+// A trick to shuffle an array randomly.
+// (0.5 is the midpoint; Math.random() is between 0 and 1)
+
+const randomSort = [...numbers].sort(() => 0.5 - Math.random());
+console.log("Random Sort:", randomSort);
+// Output: [Random order each time...]
+
+
+// --- 6. MATH.MIN() & MATH.MAX() ---
+// These methods expect a list of arguments (1, 2, 3), not an array.
+// We use the Spread Operator (...) to expand the array into arguments.
+
+const minVal = Math.min(...numbers);
+console.log("Math.min:", minVal); // Output: 1
+
+const maxVal = Math.max(...numbers);
+console.log("Math.max:", maxVal); // Output: 100
+
+
+// --- 7. HOME MADE MIN() & MAX() ---
+// If you had to write the logic manually (without using Math.min/max).
+
+function getMin(arr) {
+    let min = Infinity; // Start with the highest possible number
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+    }
+    return min;
+}
+
+function getMax(arr) {
+    let max = -Infinity; // Start with the lowest possible number
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+console.log("Home made Min:", getMin(numbers)); // Output: 1
+console.log("Home made Max:", getMax(numbers)); // Output: 100
 
 
 
