@@ -269,6 +269,90 @@ console.log("Home made Min:", getMin(numbers)); // Output: 1
 console.log("Home made Max:", getMax(numbers)); // Output: 100
 
 
+// --- 1. ITERATION & TRANSFORMATION ---
 
+const number = [1, 2, 3];
+
+// forEach(): Executes a function for each element (No return value).
+console.log("--- forEach ---");
+number.forEach(num => {
+    // Just logging, not creating a new array
+    console.log(`Processing: ${num}`);
+});
+
+// map(): Creates a NEW array by transforming every element.
+const doubled = number.map(num => num * 2);
+console.log("map(num * 2):", doubled); // [2, 4, 6]
+
+// flatMap(): Maps then flattens the result by 1 level.
+const sentences = ["Hello world", "Good morning"];
+const words = sentences.flatMap(s => s.split(" "));
+console.log("flatMap(split):", words); // ["Hello", "world", "Good", "morning"]
+
+
+// --- 2. FILTERING & ACCUMULATING ---
+
+const ages = [15, 22, 10, 40];
+
+// filter(): Creates a NEW array with elements that pass the test.
+const adults = ages.filter(age => age >= 18);
+console.log("filter(>= 18):", adults); // [22, 40]
+
+// reduce(): Reduces array to a single value (Left -> Right).
+// Total starts at 0. 0+1=1, 1+2=3, 3+3=6.
+const sum = numbers.reduce((total, num) => total + num, 0);
+console.log("reduce(sum):", sum); // 6
+
+// reduceRight(): Reduces array to a single value (Right -> Left).
+const diff = [1, 2, 3].reduceRight((total, num) => total - num);
+// Logic: 3 (start) - 2 = 1 -> 1 - 1 = 0
+console.log("reduceRight(sub):", diff); // 0
+
+
+// --- 3. CHECKING CONDITIONS ---
+
+// every(): Checks if ALL elements pass.
+const allAdults = ages.every(age => age >= 18);
+console.log("every(>= 18):", allAdults); // false (because of 15 and 10)
+
+// some(): Checks if AT LEAST ONE element passes.
+const hasAdult = ages.some(age => age >= 18);
+console.log("some(>= 18):", hasAdult); // true
+
+
+// --- 4. CREATION & GENERATORS ---
+
+// Array.from(): Creates an array from an array-like object (e.g. String).
+const chars = Array.from("ABC");
+console.log("Array.from('ABC'):", chars); // ['A', 'B', 'C']
+
+// keys(): Returns an iterator of INDICES.
+const fruit = ["Apple", "Banana"];
+const keysIter = fruit.keys();
+console.log("keys():", [...keysIter]); // [0, 1]
+
+// entries(): Returns an iterator of [INDEX, VALUE] pairs.
+const entriesIter = fruit.entries();
+console.log("entries():", [...entriesIter]); // [[0, "Apple"], [1, "Banana"]]
+
+// with() (ES2023): Returns a NEW array with one item replaced (Immutable).
+const newFruits = fruit.with(1, "Mango");
+console.log("with(1, 'Mango'):", newFruits); // ["Apple", "Mango"]
+console.log("Original fruits:", fruit);     // ["Apple", "Banana"] (Unchanged)
+
+
+// --- 5. SPREAD & REST SYNTAX (...) ---
+
+// SPREAD (...): Expands an array into individual elements.
+const part1 = [1, 2];
+const part2 = [3, 4];
+const combined = [...part1, ...part2];
+console.log("Spread (...):", combined); // [1, 2, 3, 4]
+
+// REST (...): Collects remaining elements into an array.
+// Used here in Destructuring Assignment.
+const [first, second, ...restOfThem] = combined;
+console.log("Rest (...) - first:", first); // 1
+console.log("Rest (...) - others:", restOfThem); // [3, 4]
 // String is a palindrome or not.
 // Array Sorting.
