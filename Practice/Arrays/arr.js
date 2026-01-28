@@ -100,11 +100,61 @@ console.log(myarr1.flatMap(x => [x,x*10]));
 //The splice() method can be used to add new items to an array:
 myarr1.splice(2,0,10,11,12);
 console.log(myarr1)
-console.log()
-console.log()
-console.log()
 /*Using delete() leaves undefined holes in the array.
 Use pop() or shift() instead. */
+
+
+
+
+//Array Search Methods
+// --- THE DATASET ---
+// We use an array with duplicates to clearly see the difference
+// between "first" (left-to-right) and "last" (right-to-left) searches.
+const numbers = [5, 12, 8, 130, 12, 44];
+// Indices:      0   1  2    3   4   5
+
+// --- 1. EXACT VALUE SEARCHES 
+// indexOf(): Scans from start -> end. Finds the FIRST occurrence of 12.
+const index = numbers.indexOf(12);
+console.log("indexOf(12):", index); 
+// Output: 1
+
+// lastIndexOf(): Scans from end -> start. Finds the LAST occurrence of 12.
+const lastIndex = numbers.lastIndexOf(12);
+console.log("lastIndexOf(12):", lastIndex); 
+// Output: 4
+
+// includes(): Returns true if found, false if not.
+const hasValue = numbers.includes(130);
+console.log("includes(130):", hasValue); 
+// Output: true
+
+
+// --- 2. CONDITION SEARCHES (Uses a function 'x => ...') ---
+
+// find(): Returns the actual VALUE of the first item matching the rule.
+// Rule: "Find the first number greater than 10"
+const foundValue = numbers.find(x => x > 10);
+console.log("find(x > 10):", foundValue); 
+// Output: 12 (Stops at index 1)
+
+// findIndex(): Returns the INDEX of the first item matching the rule.
+// Rule: "Find the index of the first number greater than 10"
+const foundIdx = numbers.findIndex(x => x > 10);
+console.log("findIndex(x > 10):", foundIdx); 
+// Output: 1
+
+// findLast(): Returns the VALUE of the last item matching the rule.
+// Rule: "Find the last number greater than 10" (Scans backwards)
+const foundLastVal = numbers.findLast(x => x > 10);
+console.log("findLast(x > 10):", foundLastVal); 
+// Output: 44 (Stops at index 5)
+
+// findLastIndex(): Returns the INDEX of the last item matching the rule.
+// Rule: "Find the index of the last number greater than 10"
+const foundLastIdx = numbers.findLastIndex(x => x > 10);
+console.log("findLastIndex(x > 10):", foundLastIdx); 
+// Output: 5
 
 
 
