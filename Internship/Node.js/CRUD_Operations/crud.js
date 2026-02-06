@@ -69,7 +69,7 @@ app.post("/Add",async(req,res)=>{
     const student = new Student({
         name,age,gender,email,
     });
-    const studentSaved = await student.save();
+    const studentSaved = await student.save();// saving into the DB
 
     res.status(201).json({
         message: "Student created succesfly",
@@ -82,6 +82,51 @@ app.post("/Add",async(req,res)=>{
         });
   }
 });
+
+// now we are going to create the read api Function with an id or without an id 
+// READ ALL
+app.get("/Read", async (req, res) => {
+  try {
+    const students = await Student.find();
+
+    res.status(200).json({
+      message: "All students found successfully",
+      data: students,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching students",
+      error: error.message,
+    });
+  }
+});
+
+// READ BY ID
+app.get("/Read/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const student = await Student.findById(id);
+
+    if (!student) {
+      return res.status(404).json({
+        message: "Student not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Student found successfully",
+      data: student,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Invalid student ID",
+      error: error.message,
+    });
+  }
+});
+
+
 
 app.listen(5000,()=>{
     console.log("Server is Running:",5000);
