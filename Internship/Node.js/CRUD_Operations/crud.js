@@ -6,7 +6,6 @@ app.use(express.json());
 mongoose.connect("mongodb://localhost:27017/testing")
     .then(() => console.log("MongoDB is connected"))
     .catch((err) => console.log("error:", err))
-
 const studentSchema = new mongoose.Schema({// yha schema define kra maine
     name: {
         type: String,
@@ -34,8 +33,6 @@ const studentSchema = new mongoose.Schema({// yha schema define kra maine
     {
         timestamps: true,
     });
-
-
 const Student = mongoose.model("Student", studentSchema);
 // testing the data is inderting or not
 // const testInsert = async () => {
@@ -56,8 +53,6 @@ const Student = mongoose.model("Student", studentSchema);
 
 // Call once
 //testInsert();
-
-
 app.get("/", (req, res) => {
     res.send("Hello World");
 });
@@ -75,7 +70,6 @@ app.post("/student/create", async (req, res) => {
             email,
         });
         const studentSaved = await student.save();// saving into the DB
-
         return res.status(201).json({
             succes: true,
             message: "Student created successfully",
@@ -91,7 +85,6 @@ app.post("/student/create", async (req, res) => {
         });
     }
 });
-
 // now we are going to create the read api Function with an id or without an id 
 // READ ALL
 app.get("/students", async (req, res) => {
@@ -112,7 +105,6 @@ app.get("/students", async (req, res) => {
         });
     }
 });
-
 // READ BY ID
 app.get("/student/:id", async (req, res) => {
     try {
@@ -125,7 +117,6 @@ app.get("/student/:id", async (req, res) => {
                 data: null,
             });
         }
-
         return res.status(200).json({
             status: true,
             message: "Student found successfully",
@@ -141,8 +132,6 @@ app.get("/student/:id", async (req, res) => {
         });
     }
 });
-
-
 // now going to create the API for the updation of the data upadate
 app.patch("/student/update/:id", async (req, res) => {
     try {
@@ -158,10 +147,9 @@ app.patch("/student/update/:id", async (req, res) => {
                 data: null,
             });
         }
-
         return res.status(200).json({
             status: true,
-            message: "Student updates Successfullt",
+            message: "Student updates Successfully",
             data: updatedStudent,
         });
     } catch (error) {
@@ -169,6 +157,34 @@ app.patch("/student/update/:id", async (req, res) => {
         return res.status(400).json({
             status: false,
             message: "Error Updating Student",
+            data: null,
+            error: error.message,
+        });
+    }
+});
+
+// now lets create the delete api function 
+app.delete("/student/delete/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deleteStudent = await Student.findByIdAndDelete(id);
+        if (!deleteStudent) {
+            return res.status(404).json({
+                status: false,
+                message: "Student not Found, nothing to delete",
+                data: null,
+            });
+        }
+        return res.status(200).json({
+            status: true,
+            message: "Student deleted successfully",
+            data: deleteStudent,
+        });
+    } catch (error) {
+        console.log("error", error);
+        return res.status(400).json({
+            status: false,
+            message: "Error deleting Student",
             data: null,
             error: error.message,
         });
