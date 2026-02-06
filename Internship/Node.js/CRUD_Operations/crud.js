@@ -120,7 +120,9 @@ app.get("/student/:id", async (req, res) => {
         const student = await Student.findById(id);
         if (!student) {
             return res.status(404).json({
-                message: "Student not found",
+                status: false,
+                message: "Student not Found",
+                data: null,
             });
         }
 
@@ -130,6 +132,7 @@ app.get("/student/:id", async (req, res) => {
             data: student,
         });
     } catch (error) {
+        console.log("error", error);
         return res.status(400).json({
             status: false,
             data: null,
@@ -140,7 +143,37 @@ app.get("/student/:id", async (req, res) => {
 });
 
 
+// now going to create the API for the updation of the data upadate
+app.patch("/student/update/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedStudent = await Student.findByIdAndUpdate(id, req.body, {
+            new: true,            //Return updated data (not old)
+            runValidators: true,  //Enforce schema rules
+        });
+        if (!updatedStudent) {
+            return res.status(404).json({
+                status: false,
+                message: "Student not Found",
+                data: null,
+            });
+        }
 
+        return res.status(200).json({
+            status: true,
+            message: "Student updates Successfullt",
+            data: updatedStudent,
+        });
+    } catch (error) {
+        console.log("error", error);
+        return res.status(400).json({
+            status: false,
+            message: "Error Updating Student",
+            data: null,
+            error: error.message,
+        });
+    }
+});
 app.listen(5000, () => {
     console.log("Server is Running:", 5000);
 });
