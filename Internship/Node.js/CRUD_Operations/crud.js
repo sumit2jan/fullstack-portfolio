@@ -4,37 +4,39 @@ const app = express();
 app.use(express.json());
 
 mongoose.connect("mongodb://localhost:27017/testing")
-.then(()=>console.log("MongoDB is connected"))
-.catch((err)=>console.log("error:",err))
+    .then(() => console.log("MongoDB is connected"))
+    .catch((err) => console.log("error:", err))
 
 const studentSchema = new mongoose.Schema({// yha schema define kra maine
-    name:{
-      type: String,
-      required: true,
-      trim: true,
-    } ,
-    age:{ 
-      type: Number,
-      required: true,
-      min: 1,},
-    gender: {
-      type: String,
-      enum: ["male", "female", "other"],
-      required: true,
+    name: {
+        type: String,
+        required: true,
+        trim: true,
     },
-    email:{      
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,},
+    age: {
+        type: Number,
+        required: true,
+        min: 1,
+    },
+    gender: {
+        type: String,
+        enum: ["male", "female", "other"],
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+    },
 },
-   {
-    timestamps: true,
-   });
+    {
+        timestamps: true,
+    });
 
 
-const Student = mongoose.model("Student",studentSchema);
+const Student = mongoose.model("Student", studentSchema);
 // testing the data is inderting or not
 // const testInsert = async () => {
 //   try {
@@ -56,78 +58,89 @@ const Student = mongoose.model("Student",studentSchema);
 //testInsert();
 
 
-app.get("/",(req,res) => {
+app.get("/", (req, res) => {
     res.send("Hello World");
 });
 
 // create API is created 
-app.post("/Add",async(req,res)=>{
-  try{
-    const {name,age,gender,email} = req.body;
+app.post("/student/create", async (req, res) => {
+    try {
+        const { name, age, gender, email } = req.body;
 
-    //creating instance of student
-    const student = new Student({
-        name,age,gender,email,
-    });
-    const studentSaved = await student.save();// saving into the DB
+        //creating instance of student
+        const student = new Student({
+            name,
+            age,
+            gender,
+            email,
+        });
+        const studentSaved = await student.save();// saving into the DB
 
-    res.status(201).json({
-        message: "Student created succesfly",
-        data: studentSaved,
-    });
-  }catch(error){
-        res.status(400).json({
+        return res.status(201).json({
+            succes: true,
+            message: "Student created successfully",
+            data: studentSaved,
+        });
+    } catch (error) {
+        console.log("error", error);
+        return res.status(400).json({
+            success: false,
             message: "Error creating the Student",
+            data: null,
             error: error.message,
         });
-  }
+    }
 });
 
 // now we are going to create the read api Function with an id or without an id 
 // READ ALL
-app.get("/Read", async (req, res) => {
-  try {
-    const students = await Student.find();
+app.get("/students", async (req, res) => {
+    try {
+        const students = await Student.find();
 
-    res.status(200).json({
-      message: "All students found successfully",
-      data: students,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error fetching students",
-      error: error.message,
-    });
-  }
+        return res.status(200).json({
+            status: true,
+            message: "All students found successfully",
+            data: students,
+        });
+    } catch (error) {
+        console.log("error", error);
+        return res.status(500).json({
+            message: "Error fetching students",
+            data: null,
+            error: error.message,
+        });
+    }
 });
 
 // READ BY ID
-app.get("/Read/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+app.get("/student/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const student = await Student.findById(id);
+        if (!student) {
+            return res.status(404).json({
+                message: "Student not found",
+            });
+        }
 
-    const student = await Student.findById(id);
-
-    if (!student) {
-      return res.status(404).json({
-        message: "Student not found",
-      });
+        return res.status(200).json({
+            status: true,
+            message: "Student found successfully",
+            data: student,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: false,
+            data: null,
+            message: "Invalid student ID",
+            error: error.message,
+        });
     }
-
-    res.status(200).json({
-      message: "Student found successfully",
-      data: student,
-    });
-  } catch (error) {
-    res.status(400).json({
-      message: "Invalid student ID",
-      error: error.message,
-    });
-  }
 });
 
 
 
-app.listen(5000,()=>{
-    console.log("Server is Running:",5000);
+app.listen(5000, () => {
+    console.log("Server is Running:", 5000);
 });
