@@ -63,13 +63,13 @@ getUserById = async (req, res) => {
         if (!userById) {
             return res.status(404).json({
                 status: false,
-                message: "Student not Found",
+                message: "user not Found",
                 data: null,
             });
         }
         return res.status(200).json({
             status: true,
-            message: "Student found successfully",
+            message: "user found successfully",
             data: userById,
         });
     } catch (error) {
@@ -77,10 +77,67 @@ getUserById = async (req, res) => {
         return res.status(400).json({
             status: false,
             data: null,
-            message: "Invalid student ID",
+            message: "Invalid user ID",
             error: error.message,
         });
     }
 }
 
-module.exports = { getUser, createUser, getUserById }
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedUser = await user.findByIdAndUpdate(id, req.body, {
+            new: true,            //Return updated data (not old)
+            runValidators: true,  //Enforce schema rules
+        });
+        if (!updatedUser) {
+            return res.status(404).json({
+                status: false,
+                message: "user not Found",
+                data: null,
+            });
+        }
+        return res.status(200).json({
+            status: true,
+            message: "user updates Successfully",
+            data: updatedUser,
+        });
+    } catch (error) {
+        console.log("error", error);
+        return res.status(400).json({
+            status: false,
+            message: "Error Updating user",
+            data: null,
+            error: error.message,
+        });
+    }
+}
+
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deleteUser = await user.findByIdAndDelete(id);
+        if (!deleteUser) {
+            return res.status(404).json({
+                status: false,
+                message: "User not Found, nothing to delete",
+                data: null,
+            });
+        }
+        return res.status(200).json({
+            status: true,
+            message: "User deleted successfully",
+            data: deleteUser,
+        });
+    } catch (error) {
+        console.log("error", error);
+        return res.status(400).json({
+            status: false,
+            message: "Error deleting User",
+            data: null,
+            error: error.message,
+        });
+    }
+}
+
+module.exports = { getUser, createUser, getUserById,updateUser,deleteUser}
