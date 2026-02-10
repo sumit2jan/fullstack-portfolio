@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const userDetail = require("../models/userDetail");
 const UserDetail = require("../models/userDetail");
 
 createUser = async (req, res) => {
@@ -55,8 +56,28 @@ createUser = async (req, res) => {
         });
     }
 }
-
-
-
-module.exports = { createUser, }
+const getUsers = async (req, res) => {
+    try {
+        const users = await userDetail.find({}).populate("userId");
+        if (users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No users found"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "All users fetched successfully",
+            data: users
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching users",
+            error: error.message
+        });
+    }
+};
+module.exports = {createUser,getUsers}
 
