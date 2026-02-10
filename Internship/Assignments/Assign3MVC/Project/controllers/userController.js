@@ -125,5 +125,63 @@ const getUser = async (req, res) => {
     }
 };
 
-module.exports = { createUser, getUsers, getUser }
+
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const {
+            name,
+            email,
+            password,
+            gender,
+            address,
+            country,
+            hobbies,
+            phone,
+            dob
+        } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { name, email, password },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const updatedUserDetail = await UserDetail.findOneAndUpdate(
+            { userId: id },
+            { gender, address, country, hobbies, phone, dob },
+            { new: true, runValidators: true }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "User updated successfully",
+            data: {
+                user: updatedUser,
+                userDetail: updatedUserDetail
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error updating user",
+            error: error.message
+        });
+    }
+};
+
+
+
+
+module.exports = { createUser, getUsers, getUser,updateUser }
 
