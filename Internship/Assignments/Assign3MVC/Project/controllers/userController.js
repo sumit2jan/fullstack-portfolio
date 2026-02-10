@@ -2,6 +2,7 @@ const User = require("../models/user");
 const userDetail = require("../models/userDetail");
 const UserDetail = require("../models/userDetail");
 
+// yha user create kra hai maine
 createUser = async (req, res) => {
     try {
         const { name, email, password, gender, address, country, hobbies, phone, dob } = req.body;
@@ -22,7 +23,7 @@ createUser = async (req, res) => {
             password
         });
 
-        const userSaved = await user.save(); // saving into the DB
+        const userSaved = await user.save(); // saving into the database
 
         //creating instance of UserDetail
         const userDetail = new UserDetail({
@@ -35,7 +36,7 @@ createUser = async (req, res) => {
             dob
         });
 
-        const userDetailSaved = await userDetail.save();// saving into the DB
+        const userDetailSaved = await userDetail.save(); // saving into the DB
 
         return res.status(201).json({
             success: true,
@@ -56,6 +57,8 @@ createUser = async (req, res) => {
         });
     }
 }
+
+// get all user
 const getUsers = async (req, res) => {
     try {
         const users = await userDetail.find({}).populate("userId");
@@ -79,5 +82,48 @@ const getUsers = async (req, res) => {
         });
     }
 };
-module.exports = {createUser,getUsers}
+
+// get by the id 
+const getUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const userDetail = await UserDetail
+            .findOne({ userId: id })
+            .populate("userId");
+
+        if (!userDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "User data fetched successfully",
+            data: {
+                user: userDetail.userId,
+                userDetail: {
+                    gender: userDetail.gender,
+                    address: userDetail.address,
+                    country: userDetail.country,
+                    hobbies: userDetail.hobbies,
+                    phone: userDetail.phone,
+                    dob: userDetail.dob
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching user",
+            error: error.message
+        });
+    }
+};
+
+module.exports = { createUser, getUsers, getUser }
 
