@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 const userDetailSchema = new mongoose.Schema(
     {
-        _id: {
+        userId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
+            ref: "User",
+            required: true,
+            unique: true
+
         },
 
         gender: {
