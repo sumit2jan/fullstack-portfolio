@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const userDetail = require("../models/userDetail");
 const UserDetail = require("../models/userDetail");
+const bcrypt = require("bcryptjs");
 
 // yha user create kra hai maine
 createUser = async (req, res) => {
@@ -11,20 +12,30 @@ createUser = async (req, res) => {
         if (!name || !password || !email) {
             return res.status(400).json({
                 success: false,
-                message: "All fields are required.",
+                message: "Registration failed: Name, Email, and Password are required.",
                 data: null,
             });
         }
+        // bcrypting a password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         //creating instance of User
         const user = new User({
             name,
             email,
-            password
+            password: hashedPassword
         });
 
         const userSaved = await user.save(); // saving into the database
 
+        if (!user || !userSaved._id) {
+            return res.status(400).json({
+                success: false,
+                message: "User is not Created",
+                data: null,
+            });
+        }
         //creating instance of UserDetail
         const userDetail = new UserDetail({
             userId: userSaved._id,
@@ -38,10 +49,13 @@ createUser = async (req, res) => {
 
         const userDetailSaved = await userDetail.save(); // saving into the DB
 
+        const userResponse = userSaved.toObject();
+        delete userResponse.password;
+
         return res.status(201).json({
             success: true,
             data: {
-                user: userSaved,
+                user: userResponse,
                 userDetail: userDetailSaved
             },
             message: "user created successfully",
@@ -142,9 +156,20 @@ const updateUser = async (req, res) => {
             dob
         } = req.body;
 
+        const userUpdateData = {};
+
+        if (name) userUpdateData.name = name;
+        if (email) userUpdateData.email = email;
+
+        // If password is provided → hash it
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            userUpdateData.password = await bcrypt.hash(password, salt);
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
             id,
-            { name, email, password },
+            userUpdateData,
             { new: true, runValidators: true }
         );
 
@@ -161,11 +186,14 @@ const updateUser = async (req, res) => {
             { new: true, runValidators: true }
         );
 
+        const userUpdatedResponse = updatedUser.toObject();
+        delete userUpdatedResponse.password;
+
         return res.status(200).json({
             success: true,
             message: "User updated successfully",
             data: {
-                user: updatedUser,
+                user: userUpdatedResponse,
                 userDetail: updatedUserDetail
             }
         });
