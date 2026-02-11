@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const userDetail = require("../models/userDetail");
 const UserDetail = require("../models/userDetail");
 const bcrypt = require("bcryptjs");
 
@@ -10,7 +9,7 @@ createUser = async (req, res) => {
 
 
         if (!name || !password || !email) {
-            return res.status(400).json({
+            return res.status().json({
                 success: false,
                 message: "Registration failed: Name, Email, and Password are required.",
                 data: null,
@@ -75,7 +74,7 @@ createUser = async (req, res) => {
 // get all user
 const getUsers = async (req, res) => {
     try {
-        const users = await userDetail.find({}).populate("userId");
+        const users = await UserDetail.find({}).populate("userId");
         if (users.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -150,8 +149,6 @@ const updateUser = async (req, res) => {
 
         const {
             name,
-            email,
-            password,
             gender,
             address,
             country,
@@ -163,13 +160,14 @@ const updateUser = async (req, res) => {
         const userUpdateData = {};
 
         if (name) userUpdateData.name = name;
-        if (email) userUpdateData.email = email;
 
-        // If password is provided → hash it
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            userUpdateData.password = await bcrypt.hash(password, salt);
-        }
+        const userDetailData = {};
+        if(gender) userDetailData.gender = gender;
+        if(address) userDetailData.address = address;
+        if(country) userDetailData.country = country;
+        if(hobbies) userDetailData.hobbies = hobbies;
+        if(phone) userDetailData.phone = phone;
+        if(dob) userDetailData.dob = dob;
 
         const updatedUser = await User.findByIdAndUpdate(
             id,
@@ -187,9 +185,16 @@ const updateUser = async (req, res) => {
 
         const updatedUserDetail = await UserDetail.findOneAndUpdate(
             { userId: id },
-            { gender, address, country, hobbies, phone, dob },
+            userDetailData,
             { new: true, runValidators: true }
         );
+        if (!updatedUserDetail) {
+            return res.status(404).json({
+                success: false,
+                data: null,
+                message: "User not found"
+            });
+        }
 
         const userUpdatedResponse = updatedUser.toObject();
         delete userUpdatedResponse.password;
@@ -247,7 +252,7 @@ const deleteUser = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (!email, !password) {
+        if (!email || !password) {
             return res.status(401).json({
                 success: false,
                 data: null,
