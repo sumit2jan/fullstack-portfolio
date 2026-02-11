@@ -79,6 +79,7 @@ const getUsers = async (req, res) => {
         if (users.length === 0) {
             return res.status(404).json({
                 success: false,
+                data: null,
                 message: "No users found"
             });
         }
@@ -91,6 +92,7 @@ const getUsers = async (req, res) => {
         console.error(error);
         return res.status(500).json({
             success: false,
+            data: null,
             message: "Error fetching users",
             error: error.message
         });
@@ -109,6 +111,7 @@ const getUser = async (req, res) => {
         if (!userDetail) {
             return res.status(404).json({
                 success: false,
+                data: null,
                 message: "User not found"
             });
         }
@@ -133,6 +136,7 @@ const getUser = async (req, res) => {
         console.error(error);
         return res.status(500).json({
             success: false,
+            data: null,
             message: "Error fetching user",
             error: error.message
         });
@@ -176,6 +180,7 @@ const updateUser = async (req, res) => {
         if (!updatedUser) {
             return res.status(404).json({
                 success: false,
+                data: null,
                 message: "User not found"
             });
         }
@@ -202,6 +207,7 @@ const updateUser = async (req, res) => {
         console.error(error);
         return res.status(500).json({
             success: false,
+            data: null,
             message: "Error updating user",
             error: error.message
         });
@@ -215,6 +221,7 @@ const deleteUser = async (req, res) => {
         if (!deletedUser) {
             return res.status(404).json({
                 success: false,
+                data: null,
                 message: "User not found"
             });
         }
@@ -230,11 +237,59 @@ const deleteUser = async (req, res) => {
         console.error(error);
         return res.status(500).json({
             success: false,
+            data: null,
             message: "Error deleting user",
             error: error.message
         });
     }
 };
 
-module.exports = { createUser, getUsers, getUser, updateUser, deleteUser }
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email, !password) {
+            return res.status(401).json({
+                success: false,
+                data: null,
+                message: "Email and Password are required"
+            });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                data: null,
+                message: "Invalid email or password"
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                data: null,
+                message: "Invalid email or password"
+            });
+        }
+
+        const userResponse = user.toObject();
+        delete userResponse.password;
+        return res.status(200).json({
+            success: true,
+            message: "Login successful",
+            data: userResponse
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            data: null,
+            message: "Error during login",
+            error: error.message
+        });
+    }
+};
+
+module.exports = { createUser, getUsers, getUser, updateUser, deleteUser,login }
 
