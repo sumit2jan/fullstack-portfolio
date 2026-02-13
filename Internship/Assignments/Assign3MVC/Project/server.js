@@ -8,6 +8,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use("/api/user", require("./routes/userRoutes"));
+app.use("/api/user", require("./routes/authRoutes"));
 
 const port = process.env.PORT;
 

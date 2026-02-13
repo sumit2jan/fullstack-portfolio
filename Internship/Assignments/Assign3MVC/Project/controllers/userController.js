@@ -9,12 +9,22 @@ createUser = async (req, res) => {
 
 
         if (!name || !password || !email) {
-            return res.status().json({
+            return res.status(400).json({
                 success: false,
                 message: "Registration failed: Name, Email, and Password are required.",
                 data: null,
             });
         }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                message: "Email already registered.",
+                data: null
+            });
+        }
+
         // bcrypting a password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -249,52 +259,6 @@ const deleteUser = async (req, res) => {
     }
 };
 
-const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(401).json({
-                success: false,
-                data: null,
-                message: "Email and Password are required"
-            });
-        }
 
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                data: null,
-                message: "Invalid email or password"
-            });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                data: null,
-                message: "Invalid email or password"
-            });
-        }
-
-        const userResponse = user.toObject();
-        delete userResponse.password;
-        return res.status(200).json({
-            success: true,
-            message: "Login successful",
-            data: userResponse
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            success: false,
-            data: null,
-            message: "Error during login",
-            error: error.message
-        });
-    }
-};
-
-module.exports = { createUser, getUsers, getUser, updateUser, deleteUser,login }
+module.exports = { createUser, getUsers, getUser, updateUser, deleteUser}
 
