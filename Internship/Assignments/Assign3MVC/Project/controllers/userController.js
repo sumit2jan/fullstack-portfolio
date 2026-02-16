@@ -152,10 +152,9 @@ const getUser = async (req, res) => {
     }
 };
 
-
 const updateUser = async (req, res) => {
     try {
-        const { id } = req.params;
+        const id  = req.user._id;
 
         const {
             name,
