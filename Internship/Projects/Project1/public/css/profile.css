@@ -12,44 +12,74 @@ body {
     min-height: 100vh;
 }
 
-   .navbar {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
+.navbar {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-        .navbar-brand {
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
 
-/* 3. The Glassmorphism Card */
+/* 2. The Glassmorphism Card */
 .glass-card {
     background: rgba(255, 255, 255, 0.03); /* Subtle white transparency */
-    backdrop-filter: blur(12px); /* Frosty glass effect */
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px); /* Increased blur for better readability */
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1.5rem;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     color: white;
 }
 
-/* 4. Typography & Labels */
+/* 3. Typography & Sectioning */
 h2 {
     letter-spacing: -1px;
+}
+
+/* New class for section headers (e.g., Personal Details) */
+.section-title {
+    color: #a78bfa; /* Light purple to match theme */
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    border-left: 3px solid #6d28d9;
+    padding-left: 10px;
 }
 
 .text-muted {
     color: #a0a0a0 !important;
 }
 
-.text-uppercase {
-    letter-spacing: 1px;
+/* 4. Field Labels & Values */
+.label-custom {
+    display: block;
+    color: #a0a0a0;
     font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.value-custom {
+    font-size: 1.1rem;
+    color: #ffffff;
+    font-weight: 500;
+    word-break: break-word; /* Prevents long emails/addresses from breaking layout */
+}
+
+/* Divider Line */
+.divider {
+    border-color: rgba(255, 255, 255, 0.1);
+    margin: 1.5rem 0 2rem 0;
 }
 
 /* 5. Custom Buttons */
-/* Matches the "Get Started" purple from your image */
 .btn-danger {
     background-color: #6d28d9; 
     border: none;
@@ -68,10 +98,12 @@ h2 {
 }
 
 /* 6. Profile Icon Container */
-span[style*="font-size: 3rem;"] {
+.profile-icon {
     display: inline-block;
+    font-size: 3rem;
     padding: 20px;
-    background: rgba(109, 40, 217, 0.1);
+    background: rgba(109, 40, 217, 0.15); /* Slightly more visible background */
     border-radius: 50%;
     margin-bottom: 10px;
+    box-shadow: 0 0 20px rgba(109, 40, 217, 0.2); /* Added glow */
 }

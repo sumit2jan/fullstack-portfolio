@@ -7,23 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
-    
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="/css/style1.css">
+    <style>
+        /* Optional: Ensures the background doesn't shift when modal opens */
+        .swal2-shown {
+            padding-right: 0px !important;
+        }
+    </style>
 </head>
 
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark py-3">
         <div class="container">
-            <a class="navbar-brand fs-4" href="/students">
-                🎓 Gradly
-            </a>
-
+            <a class="navbar-brand fs-4" href="/students">🎓 Gradly</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse justify-content-end" id="navMenu">
                 <ul class="navbar-nav gap-3 align-items-center">
                     <li class="nav-item">
@@ -38,39 +40,40 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-5">
-                    
                     <div class="card glass-card p-4 p-md-5 text-center">
 
-                        <h3 class="mb-4">Login</h3>
+                        <% if (typeof messageType !=='undefined' && messageType==="logout" ) { %>
+                            <h3 class="mb-4" style="visibility: hidden;">Logged Out</h3>
+                            <% } else { %>
+                                <h3 class="mb-4">Login</h3>
+                                <% } %>
 
-                        <% if (typeof error !== 'undefined' && error) { %>
-                            <div class="alert alert-danger"><%= error %></div>
-                        <% } %>
+                                    <% if (typeof error !=='undefined' && error) { %>
+                                        <div class="alert alert-danger">
+                                            <%= error %>
+                                        </div>
+                                        <% } %>
 
-                        <form method="POST" action="/students/login">
-                            
-                            <input class="form-control mb-3"
-                                   type="email"
-                                   name="email"
-                                   value="<%= typeof email !== 'undefined' ? email : '' %>"
-                                   placeholder="Email"
-                                   required>
+                                            <form method="POST" action="/students/login">
+                                                <input class="form-control mb-3" type="email" name="email"
+                                                    value="<%= typeof email !== 'undefined' ? email : '' %>"
+                                                    placeholder="Email" required>
 
-                            <input class="form-control mb-4"
-                                   type="password"
-                                   name="password"
-                                   placeholder="Password"
-                                   required>
+                                                <input class="form-control mb-4" type="password" name="password"
+                                                    placeholder="Password" required>
 
-                            <button type="submit" class="btn btn-primary w-100 fw-semibold">Login</button>
-                        </form>
+                                                <button type="submit"
+                                                    class="btn btn-primary w-100 fw-semibold">Login</button>
+                                            </form>
 
-                        <div class="text-center mt-3">
-                            <a href="/students/register" style="color: #7b2cbf; text-decoration: none;">Register New Account</a>
-                        </div>
-                        <div class="text-center mt-2">
-                            <a href="/students" class="text-muted small">Back to Home</a>
-                        </div>
+                                            <div class="text-center mt-3">
+                                                <a href="/students/register"
+                                                    style="color: #7b2cbf; text-decoration: none;">Register New
+                                                    Account</a>
+                                            </div>
+                                            <div class="text-center mt-2">
+                                                <a href="/students" style="color: #7b2cbf;">Back to Home</a>
+                                            </div>
 
                     </div>
                 </div>
@@ -79,36 +82,47 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- <script>
-        // Checks for a simple 'success' variable passed from backend
-        // Ensure your backend passes { success: true } on successful login
-        const isSuccess = <%= (typeof success !== 'undefined' && success) ? 'true' : 'false' %>;
-        
-        if (isSuccess) {
+    <% if (typeof messageType !=='undefined' && messageType==="logout" ) { %>
+        <script>
             Swal.fire({
-                title: 'Login Successful!',
-                html: 'User verified.<br><strong>Token Generated Successfully.</strong>',
                 icon: 'success',
-                background: '#1a1a1a', 
-                color: '#ffffff',
-                confirmButtonColor: '#7b2cbf', 
-                confirmButtonText: 'Go to Dashboard',
-                allowOutsideClick: false,
-                backdrop: `rgba(0,0,123,0.4) left top no-repeat`
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '/students';
-                }
+                title: 'Logged Out',
+                text: 'You have been logged out successfully!',
+                confirmButtonColor: '#7b2cbf',
+                background: '#19191a', /* Matches dark theme */
+                color: '#fff'
+            }).then(() => {
+                // Clean the URL so the message doesn't pop up again on refresh
+                window.history.replaceState({}, document.title, "/students/login");
             });
+        </script>
+        <% } %>
 
-            // Auto redirect
-            setTimeout(() => {
-                window.location.href = '/students';
-            }, 2500);
-        }
-    </script> -->
+            <% if (typeof messageType !=='undefined' && messageType==="registerSuccess" ) { %>
+                <script>
+                    Swal.fire({
+                        icon: "success",
+                        title: "Registration Successful!",
+                        text: "What would you like to do next?",
+                        showCancelButton: true,
+                        confirmButtonText: "Login",
+                        cancelButtonText: "Create Another User",
+                        confirmButtonColor: "#7b2cbf",
+                        cancelButtonColor: "#6c757d",
+                        background: '#19191a',
+                        color: '#fff'
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.cancel) {
+                            window.location.href = "/students/register";
+                        } else {
+                            window.history.replaceState({}, document.title, "/students/login");
+                        }
+                    });
+                </script>
+                <% } %>
 
 </body>
+
 </html>

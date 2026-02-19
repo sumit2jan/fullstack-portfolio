@@ -1,0 +1,174 @@
+/* ===============================
+   Base Layout
+=================================*/
+
+body {
+    background: radial-gradient(circle at top left, #1f1c2c, #121212);
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    position: relative;
+}
+
+.glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(142,45,226,0.35) 0%, transparent 70%);
+    top: -150px;
+    left: -150px;
+    filter: blur(100px);
+    z-index: -1;
+}
+
+/* ===============================
+   Header
+=================================*/
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-title {
+    font-weight: 700;
+    font-size: 2.2rem;
+}
+
+.dashboard-subtitle {
+    color: #a8a8a8;
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+/* ===============================
+   Card Container
+=================================*/
+
+.dashboard-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    padding: 10px 0;
+}
+
+/* ===============================
+   Table Styling
+=================================*/
+
+.custom-table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0 8px; /* space between rows */
+}
+
+/* Remove Bootstrap background completely */
+.table,
+.table th,
+.table td {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+/* ===== Table Header ===== */
+
+.custom-table thead th {
+    color: #d5d5d5 !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    padding: 18px 22px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Table Rows ===== */
+
+.custom-table tbody tr {
+    background: rgba(255, 255, 255, 0.035);
+    transition: all 0.2s ease;
+}
+
+.custom-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+}
+
+/* ===== Table Cells ===== */
+
+.custom-table tbody td {
+    padding: 18px 22px;
+    font-size: 0.9rem;
+    vertical-align: middle;
+    color: #e6e6e6 !important; /* FIX for dark inner data */
+}
+
+/* First column (Name) more important */
+.custom-table tbody td:first-child {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Slightly muted secondary info */
+.text-muted-light {
+    color: #a8a8a8 !important;
+}
+
+/* ===============================
+   Role Badge
+=================================*/
+
+.role-badge {
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    border-radius: 30px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.role-badge.admin {
+    background: rgba(255, 71, 87, 0.12);
+    color: #ff4757;
+    border: 1px solid rgba(255, 71, 87, 0.25);
+}
+
+.role-badge.user {
+    background: rgba(0, 198, 255, 0.12);
+    color: #00c6ff;
+    border: 1px solid rgba(0, 198, 255, 0.25);
+}
+
+/* ===============================
+   Buttons
+=================================*/
+
+.btn-edit {
+    background: linear-gradient(135deg, #8e2de2, #4a00e0);
+    border: none;
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(142, 45, 226, 0.4);
+}
+
+.btn-back {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
