@@ -24,24 +24,85 @@ body {
 /* ===============================
    Header
 =================================*/
-
-.dashboard-header {
+/* Container spacing */
+.header-container {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end; /* Bottom se align karne par zayda clean lagta hai */
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Left Section */
 .dashboard-title {
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+    background: linear-gradient(to right, #fff, #a5a5a5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.count-badge {
+    background: #007bff;
+    color: white;
+    padding: 2px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Right Section - Stat Box */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.stat-box {
+    text-align: right;
+    border-right: 2px solid #007bff;
+    padding-right: 20px;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+    margin-bottom: -5px;
+}
+
+.stat-number {
     font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
 }
 
-.dashboard-subtitle {
-    color: #a8a8a8;
-    font-size: 0.95rem;
-    margin-top: 6px;
+/* Back Button Modern */
+.btn-back-modern {
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
 }
 
+.btn-back-modern:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-2px);
+}
 /* ===============================
    Card Container
 =================================*/
@@ -171,4 +232,52 @@ body {
 
 .btn-back:hover {
     background: rgba(255, 255, 255, 0.08);
+}
+
+
+/* ===============================
+   Action Buttons Spacing
+=================================*/
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; /* spacing between buttons */
+    align-items: center;
+}
+
+.action-buttons form {
+    margin: 0; /* remove default form spacing */
+}
+
+
+/* ===============================
+   Delete Button (Premium Match)
+=================================*/
+
+.btn-delete {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    border: none;
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+/* Remove ugly browser border */
+.btn-delete:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4);
+}
+
+.btn-delete:active {
+    transform: scale(0.96);
 }

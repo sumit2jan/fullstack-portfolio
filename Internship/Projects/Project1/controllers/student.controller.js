@@ -182,10 +182,68 @@ const updateProfile = async (req, res) => {
 
     } catch (error) {
         console.error("Update Error:", error);
-        res.status(500).send("Update failed.");
+        return res.status(500).send("Update failed.");
     }
 };
-module.exports = { createStudent, updateProfile };
+
+
+// const deleteStudent = async (req, res) => {
+//     try {
+//         const paramId = req.params.id;
+//         const loggedInId = req.user._id.toString();
+
+//         // 🔐 Only admin OR self delete
+//         if (!req.user.isAdmin && paramId !== loggedInId) {
+//             return res.redirect("/students/admin/dashboard");
+//         }
+
+//         await Student.findByIdAndDelete(paramId);
+//         await StudentDetail.findOneAndDelete({ student: paramId });
+
+//         // If user deletes himself → logout
+//         if (paramId === loggedInId) {
+//             res.clearCookie("token");
+//             return res.redirect("/students/login");
+//         }
+
+//         // ✅ Redirect with success message
+//         return res.redirect("/students/admin/dashboard?deleted=true");
+
+//     } catch (error) {
+//         console.error("Delete Error:", error);
+//         return res.redirect("/students/admin/dashboard");
+//     }
+// };
+
+
+const deleteStudent = async (req, res) => {
+    try {
+        const paramId = req.params.id;
+        const loggedInId = req.user._id.toString();
+
+         //Only admin should reach here
+        if (!req.user.isAdmin) {
+            return res.redirect("/students/profile");
+        }
+
+        //Prevent admin from deleting himself
+        if (paramId === loggedInId) {
+            return res.redirect("/students/admin/dashboard");
+        }
+
+        await Student.findByIdAndDelete(paramId);
+        await StudentDetail.findOneAndDelete({ student: paramId });
+
+        return res.redirect("/students/admin/dashboard?deleted=true");
+
+    } catch (error) {
+        console.error("Delete Error:", error);
+        return res.redirect("/students/admin/dashboard");
+    }
+};
+
+
+module.exports = {createStudent, updateProfile,deleteStudent};
 
 // const updateProfile = async (req, res) => {
 //     try {
