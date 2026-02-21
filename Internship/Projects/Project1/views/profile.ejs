@@ -228,6 +228,75 @@
                         </script>
                         <% } %>
 
+
+                            // for the dashboard error
+                            <% if (typeof messageType !=='undefined' && messageType==="DashboardError" ) { %>
+                                <script>
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Dashboard Error",
+                                        text: "Error loading dashboard!",
+                                        confirmButtonColor: "#7b2cbf",
+                                        background: '#19191a',
+                                        color: '#fff'
+                                    }).then(() => {
+                                        window.history.replaceState(null, document.title, "/students/profile");
+                                    });
+                                </script>
+                                <% } %>
+
+                                    //Unauthorized for the update Error
+                                    <% if (typeof messageType !=='undefined' && messageType==="Unauthorized" ) { %>
+                                        <script>
+                                            Swal.fire({
+                                                icon: "error",
+                                                title: "Unauthorized",
+                                                text: "Not authorized to update the profile",
+                                                confirmButtonColor: "#7b2cbf",
+                                                background: '#19191a',
+                                                color: '#fff'
+                                            }).then(() => {
+                                                window.history.replaceState(null, document.title, "/students/profile");
+                                            });
+                                        </script>
+                                        <% } %>
+                                            // update Error occured while updating the user
+                                            <% if (typeof messageType !=='undefined' && messageType==="updateError" ) {
+                                                %>
+                                                <script>
+                                                    Swal.fire({
+                                                        icon: "error",
+                                                        title: "Update error Occured",
+                                                        text: "Something goes wrong please try again later",
+                                                        confirmButtonColor: "#7b2cbf",
+                                                        background: '#19191a',
+                                                        color: '#fff'
+                                                    }).then(() => {
+                                                        window.history.replaceState(null, document.title, "/students/profile");
+                                                    });
+                                                </script>
+                                                <% } %>
+
+                                                    // profile page error rendering it
+                                                    <% if (typeof messageType !=='undefined' &&
+                                                        messageType==="ErrorProfilePage" ) { %>
+                                                        <script>
+                                                            Swal.fire({
+                                                                icon: "error",
+                                                                title: "Page Not Renderd",
+                                                                text: "Error rendering the profile page",
+                                                                confirmButtonColor: "#7b2cbf",
+                                                                background: '#19191a',
+                                                                color: '#fff'
+                                                            }).then(() => {
+                                                                window.history.replaceState(null, document.title, "/students");
+                                                            });
+                                                        </script>
+                                                        <% } %>
+
+
+
+
 </body>
 
 </html>

@@ -135,10 +135,10 @@ const updateProfile = async (req, res) => {
         console.log("Is Admin:", req.user.isAdmin)
         console.log("Param ID:", paramId);
         console.log("Logged ID:", loggedInId);
-        if (!req.user.isAdmin && paramId !== loggedInId) {
-            return res.status(403).send("Unauthorized update"); // main logic for updating data in the dashboard.
-        }
-        ;
+        if (!req.user.isAdmin && paramId !== loggedInId) {// main logic for updating data in the dashboard.
+            //return res.status(403).send("Unauthorized update"); 
+            return res.redirect("/students/profile?type=Unauthorized");
+        };
         const {
             firstName, lastName,
             age, gender, phone, pan, adhar,
@@ -182,9 +182,43 @@ const updateProfile = async (req, res) => {
 
     } catch (error) {
         console.error("Update Error:", error);
-        return res.status(500).send("Update failed.");
+        //return res.status(500).send("Update failed.");
+        return res.redirect("/students/profile?type=updateError");
     }
 };
+
+// delete API
+const deleteStudent = async (req, res) => {
+    try {
+        const paramId = req.params.id;
+        const loggedInId = req.user._id.toString();
+
+        //Only admin should reach here
+        if (!req.user.isAdmin) {
+            return res.redirect("/students/profile?type=adminRequired");
+        }
+
+        //Prevent admin from deleting himself
+        if (paramId === loggedInId) {
+            return res.redirect("/students/admin/dashboard");
+        }
+
+        await Student.findByIdAndDelete(paramId);
+        await StudentDetail.findOneAndDelete({ student: paramId });
+
+        //return res.redirect("/students/admin/dashboard?deleted=true");
+        return res.redirect("/students/admin/dashboard?type=studentDeleted");
+
+
+    } catch (error) {
+        console.error("Delete Error:", error);
+        return res.redirect("/students/admin/dashboard?type=DeleteError");
+       // return res.redirect("/students/admin/dashboard");
+    }
+};
+
+
+module.exports = { createStudent, updateProfile, deleteStudent };
 
 
 // const deleteStudent = async (req, res) => {
@@ -215,35 +249,6 @@ const updateProfile = async (req, res) => {
 //     }
 // };
 
-
-const deleteStudent = async (req, res) => {
-    try {
-        const paramId = req.params.id;
-        const loggedInId = req.user._id.toString();
-
-         //Only admin should reach here
-        if (!req.user.isAdmin) {
-            return res.redirect("/students/profile");
-        }
-
-        //Prevent admin from deleting himself
-        if (paramId === loggedInId) {
-            return res.redirect("/students/admin/dashboard");
-        }
-
-        await Student.findByIdAndDelete(paramId);
-        await StudentDetail.findOneAndDelete({ student: paramId });
-
-        return res.redirect("/students/admin/dashboard?deleted=true");
-
-    } catch (error) {
-        console.error("Delete Error:", error);
-        return res.redirect("/students/admin/dashboard");
-    }
-};
-
-
-module.exports = {createStudent, updateProfile,deleteStudent};
 
 // const updateProfile = async (req, res) => {
 //     try {

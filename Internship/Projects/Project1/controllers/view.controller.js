@@ -37,6 +37,7 @@ const getProfile = async (req, res) => {
     } catch (error) {
         console.error("Profile Fetch Error:", error);
         res.status(500).send("Something went wrong.");
+        //return res.redirect("/students/profile?type=ErrorProfilePage");
     }
 };
 
@@ -99,7 +100,7 @@ const getEditProfile = async (req, res) => {
 
         res.render("editProfile", {
             student: mergedStudent,
-            messageType: req.query.type,
+            messageType: req.query.type|| null,
             errors: {}
         });
 
