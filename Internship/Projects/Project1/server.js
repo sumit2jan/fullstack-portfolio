@@ -15,6 +15,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieparser());
 
+app.use((req, res, next) => {
+    const token = req.cookies.token;
+    // 'isLoggedIn' ab har EJS file mein direct use ho sakta hai
+    res.locals.isLoggedIn = !!token;
+    next();
+});
+
+//routes
 app.use("/students", require("./routes/student.routes"));
 app.use("/students", require("./routes/auth.routes"));
 app.use("/students", require("./routes/view.routes"));

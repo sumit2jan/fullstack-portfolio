@@ -37,15 +37,15 @@
                     <h1 class="dashboard-title">Admin Dashboard</h1>
                     <div class="subtitle-wrapper">
                         <p class="dashboard-subtitle">Manage users, roles and student information</p>
-                        <span class="count-badge">Total: <%= students.length %></span>
+                        <!-- <span class="count-badge count-up">Total: <%= students.length %> 0</span> -->
                     </div>
                 </div>
 
                 <div class="header-right">
                     <div class="stat-box">
                         <span class="stat-label">Active Students</span>
-                        <span class="stat-number">
-                            <%= students.length %>
+                        <span class="stat-number count-up" data-target="<%= students.length %>">
+                            0
                         </span>
                     </div>
                     <a href="/students/profile" class="btn-back-modern">
@@ -176,7 +176,38 @@
                 </script>
                 <% } %>
 
+                    <script>
+                        document.addEventListener("DOMContentLoaded", () => {
+                            // Select all elements with the 'count-up' class
+                            const counters = document.querySelectorAll('.count-up');
+                            // Set how long the animation should take in milliseconds (1.5 seconds)
+                            const duration = 1500;
 
+                            counters.forEach(counter => {
+                                const target = parseInt(counter.getAttribute('data-target'), 10);
+                                const intervalTime = 16; // ~60 frames per second
+
+                                // Calculate how much to add per frame
+                                const step = Math.max(1, Math.ceil(target / (duration / intervalTime)));
+                                let current = 0;
+
+                                if (target > 0) {
+                                    const timer = setInterval(() => {
+                                        current += step;
+                                        if (current >= target) {
+                                            counter.innerText = target; // Ensure it ends exactly on the target
+                                            clearInterval(timer);
+                                        } else {
+                                            counter.innerText = current;
+                                        }
+                                    }, intervalTime);
+                                } else {
+                                    // If the target is 0, just show 0 immediately
+                                    counter.innerText = target;
+                                }
+                            });
+                        });
+                    </script>
 </body>
 
 </html>

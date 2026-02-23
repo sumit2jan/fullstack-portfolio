@@ -128,53 +128,85 @@ const createStudent = async (req, res) => {
 };
 //update API
 const updateProfile = async (req, res) => {
-    try {
-        const paramId = req.params.id;
-        const loggedInId = req.user._id.toString();
+    const paramId = req.params.id;
+    const loggedInId = req.user._id.toString();
 
-        console.log("Is Admin:", req.user.isAdmin)
-        console.log("Param ID:", paramId);
-        console.log("Logged ID:", loggedInId);
-        if (!req.user.isAdmin && paramId !== loggedInId) {// main logic for updating data in the dashboard.
-            //return res.status(403).send("Unauthorized update"); 
-            return res.redirect("/students/profile?type=Unauthorized");
-        };
+    // 1. Authorization Check
+    if (!req.user.isAdmin && paramId !== loggedInId) {
+        return res.redirect("/students/profile?type=Unauthorized");
+    }
+
+    try {
+        // --- ADDED THIS LINE TO GET STUDENT EMAIL ---
+        const targetStudent = await Student.findById(paramId);
+        if (!targetStudent) return res.redirect("/students/profile?type=NotFound");
+
         const {
-            firstName, lastName,
-            age, gender, phone, pan, adhar,
+            firstName, lastName, age, gender, phone, pan, adhar,
             address, country, hobbies, dob
         } = req.body;
 
-        let processedHobbies;
-        if (hobbies) {
-            processedHobbies = [
-                ...new Set(hobbies.split(",").map(h => h.trim()).filter(Boolean))
-            ];
+        const errors = {};
+
+        // 2. Manual Uniqueness Checks
+        if (phone) {
+            const existingPhone = await StudentDetail.findOne({ phone, student: { $ne: paramId } });
+            if (existingPhone) errors.phone = "Phone number already in use.";
+        }
+        if (pan) {
+            const existingPan = await StudentDetail.findOne({ pan: pan.toUpperCase(), student: { $ne: paramId } });
+            if (existingPan) errors.pan = "PAN number already registered.";
+        }
+        if (adhar) {
+            const existingAdhar = await StudentDetail.findOne({ adhar, student: { $ne: paramId } });
+            if (existingAdhar) errors.adhar = "Adhar number already registered.";
         }
 
-        // ✅ Only update provided fields
+        // Helper function
+        const renderWithError = (errorObj) => {
+            return res.render("editProfile", {
+                student: {
+                    _id: paramId,
+                    email: targetStudent.email, // <--- CHANGED THIS
+                    firstName, lastName, age, gender, phone, pan, adhar, address, country, dob,
+                    hobbies: hobbies ? (typeof hobbies === 'string' ? hobbies.split(",").map(h => h.trim()) : hobbies) : []
+                },
+                errors: errorObj
+            });
+        };
+
+        if (Object.keys(errors).length > 0) {
+            return renderWithError(errors);
+        }
+
+        // 3. Build Updates
         const basicUpdate = {};
         if (firstName) basicUpdate.firstName = firstName;
         if (lastName) basicUpdate.lastName = lastName;
-
-        await Student.findByIdAndUpdate(paramId, basicUpdate);
 
         const detailUpdate = {};
         if (age) detailUpdate.age = age;
         if (gender) detailUpdate.gender = gender;
         if (phone) detailUpdate.phone = phone;
-        if (pan) detailUpdate.pan = pan;
+        if (pan) detailUpdate.pan = pan.toUpperCase();
         if (adhar) detailUpdate.adhar = adhar;
         if (address) detailUpdate.address = address;
         if (country) detailUpdate.country = country;
-        if (processedHobbies) detailUpdate.hobbies = processedHobbies;
         if (dob) detailUpdate.dob = dob;
 
-        await StudentDetail.findOneAndUpdate(
-            { student: paramId },
-            detailUpdate,
-            { new: true }
-        );
+        if (hobbies) {
+            detailUpdate.hobbies = [...new Set(hobbies.split(",").map(h => h.trim()).filter(Boolean))];
+        }
+
+        // 4. Update Database
+        if (Object.keys(basicUpdate).length > 0) {
+            await Student.findByIdAndUpdate(paramId, basicUpdate, { new: true, runValidators: true, context: 'query' });
+        }
+
+        if (Object.keys(detailUpdate).length > 0) {
+            await StudentDetail.findOneAndUpdate({ student: paramId }, detailUpdate, { new: true, upsert: true, runValidators: true, context: 'query' });
+        }
+
         if (req.user.isAdmin && paramId !== loggedInId) {
             return res.redirect("/students/admin/dashboard");
         }
@@ -182,10 +214,99 @@ const updateProfile = async (req, res) => {
 
     } catch (error) {
         console.error("Update Error:", error);
-        //return res.status(500).send("Update failed.");
+        const catchErrors = {};
+        
+        // --- FETCH STUDENT AGAIN FOR CATCH BLOCK ---
+        const targetStudent = await Student.findById(paramId);
+
+        if (error.name === 'ValidationError') {
+            Object.keys(error.errors).forEach((key) => {
+                catchErrors[key] = error.errors[key].message;
+            });
+
+            return res.render("editProfile", {
+                student: {
+                    _id: paramId,
+                    email: targetStudent.email, // <--- CHANGED THIS
+                    ...req.body,
+                    hobbies: req.body.hobbies ? (typeof req.body.hobbies === 'string' ? req.body.hobbies.split(',').map(h => h.trim()) : req.body.hobbies) : []
+                },
+                errors: catchErrors
+            });
+        }
+
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue)[0];
+            catchErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is already registered.`;
+
+            return res.render("editProfile", {
+                student: { _id: paramId, email: targetStudent.email, ...req.body }, // <--- CHANGED THIS
+                errors: catchErrors
+            });
+        }
+
         return res.redirect("/students/profile?type=updateError");
     }
 };
+// const updateProfile = async (req, res) => {
+//     try {
+//         const paramId = req.params.id;
+//         const loggedInId = req.user._id.toString();
+
+//         console.log("Is Admin:", req.user.isAdmin)
+//         console.log("Param ID:", paramId);
+//         console.log("Logged ID:", loggedInId);
+//         if (!req.user.isAdmin && paramId !== loggedInId) {// main logic for updating data in the dashboard.
+//             //return res.status(403).send("Unauthorized update"); 
+//             return res.redirect("/students/profile?type=Unauthorized");
+//         };
+//         const {
+//             firstName, lastName,
+//             age, gender, phone, pan, adhar,
+//             address, country, hobbies, dob
+//         } = req.body;
+
+//         let processedHobbies;
+//         if (hobbies) {
+//             processedHobbies = [
+//                 ...new Set(hobbies.split(",").map(h => h.trim()).filter(Boolean))
+//             ];
+//         }
+
+//         // ✅ Only update provided fields
+//         const basicUpdate = {};
+//         if (firstName) basicUpdate.firstName = firstName;
+//         if (lastName) basicUpdate.lastName = lastName;
+
+//         await Student.findByIdAndUpdate(paramId, basicUpdate);
+
+//         const detailUpdate = {};
+//         if (age) detailUpdate.age = age;
+//         if (gender) detailUpdate.gender = gender;
+//         if (phone) detailUpdate.phone = phone;
+//         if (pan) detailUpdate.pan = pan;
+//         if (adhar) detailUpdate.adhar = adhar;
+//         if (address) detailUpdate.address = address;
+//         if (country) detailUpdate.country = country;
+//         if (processedHobbies) detailUpdate.hobbies = processedHobbies;
+//         if (dob) detailUpdate.dob = dob;
+
+//         await StudentDetail.findOneAndUpdate(
+//             { student: paramId },
+//             detailUpdate,
+//             { new: true }
+//         );
+//         if (req.user.isAdmin && paramId !== loggedInId) {
+//             return res.redirect("/students/admin/dashboard");
+//         }
+//         return res.redirect("/students/profile?type=updateSuccess");
+
+//     } catch (error) {
+//         console.error("Update Error:", error);
+//         //return res.status(500).send("Update failed.");
+//         return res.redirect("/students/profile?type=updateError");
+//     }
+// };
 
 // delete API
 const deleteStudent = async (req, res) => {
@@ -213,7 +334,7 @@ const deleteStudent = async (req, res) => {
     } catch (error) {
         console.error("Delete Error:", error);
         return res.redirect("/students/admin/dashboard?type=DeleteError");
-       // return res.redirect("/students/admin/dashboard");
+        // return res.redirect("/students/admin/dashboard");
     }
 };
 

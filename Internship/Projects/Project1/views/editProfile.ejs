@@ -134,7 +134,7 @@
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Date of Birth</label>
                                             <input type="date" name="dob" class="form-control"
-                                                value="<%= student.dob ? student.dob.toISOString().split('T')[0] : '' %>">
+                                                value="<%= student.dob ? new Date(student.dob).toISOString().split('T')[0] : '' %>">
                                             <small class="text-danger">
                                                 <%= errors?.dob %>
                                             </small>
