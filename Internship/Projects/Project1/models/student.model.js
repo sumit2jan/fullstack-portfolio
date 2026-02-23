@@ -40,7 +40,13 @@ const studentSchema = new mongoose.Schema(
     isAdmin: {
       type: Boolean,
       default: false
-    }
+    },
+    isValid: {
+      type: Boolean,
+      default: false
+    },
+    emailVerificationToken: String,
+    emailVerificationExpire: Date
   },
   { timestamps: true }
 );

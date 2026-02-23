@@ -1,6 +1,7 @@
 const Student = require("../models/student.model");
 const StudentDetail = require("../models/studentDetail.model");
 const bcrypt = require("bcryptjs");
+const { sendMail } = require("../utils/helperFuntion");
 
 
 //create API
@@ -42,7 +43,7 @@ const createStudent = async (req, res) => {
             dob
         });
 
-        // 3 Validate BOTH
+        //3 Validate BOTH;
         let errors = {};
 
         try {
@@ -87,6 +88,12 @@ const createStudent = async (req, res) => {
         studentId = student._id;
 
         await detail.save();
+
+        sendMail({
+            email: email,
+            content: `Hello ${firstName}, Welcome to my app!`,
+            subject: "Registeration Successful"
+        })
 
         // return res.render("register", {
         //     success: true,
@@ -215,7 +222,7 @@ const updateProfile = async (req, res) => {
     } catch (error) {
         console.error("Update Error:", error);
         const catchErrors = {};
-        
+
         // --- FETCH STUDENT AGAIN FOR CATCH BLOCK ---
         const targetStudent = await Student.findById(paramId);
 

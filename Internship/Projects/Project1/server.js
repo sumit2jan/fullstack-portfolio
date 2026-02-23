@@ -26,6 +26,7 @@ app.use((req, res, next) => {
 app.use("/students", require("./routes/student.routes"));
 app.use("/students", require("./routes/auth.routes"));
 app.use("/students", require("./routes/view.routes"));
+app.use("/mail", require("./routes/sendMailRoute"));
 const port = process.env.PORT || 4000;
 
 app.listen(port, () => {
