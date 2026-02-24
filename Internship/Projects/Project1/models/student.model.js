@@ -45,8 +45,12 @@ const studentSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    emailVerificationToken: String,
-    emailVerificationExpire: Date
+    verificationToken: {
+      type: String
+    },
+    verificationTokenExpiry: {
+      type: Date
+    }
   },
   { timestamps: true }
 );

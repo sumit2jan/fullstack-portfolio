@@ -2,6 +2,7 @@ const Student = require("../models/student.model");
 const StudentDetail = require("../models/studentDetail.model");
 const bcrypt = require("bcryptjs");
 const { sendMail } = require("../utils/helperFuntion");
+const { EmailVerificationToken, verifyToken } = require("../utils/generate.token");
 
 
 //create API
@@ -87,19 +88,36 @@ const createStudent = async (req, res) => {
         await student.save();
         studentId = student._id;
 
+        const verificationToken = EmailVerificationToken(student._id);
+
+        student.verificationToken = verificationToken;
+        student.verificationTokenExpiry = Date.now() + 10 * 60 * 1000; // means 10 mins
+
+        await student.save();
         await detail.save();
 
-        sendMail({
+        const verificationLink = `http://localhost:4000/students/verify-email?token=${verificationToken}`;
+        await sendMail({
             email: email,
-            content: `Hello ${firstName}, Welcome to my app!`,
-            subject: "Registeration Successful"
-        })
+            subject: "Verify Your Email",
+            content: `
+        <h2>Hello ${firstName},</h2>
+        <p>Please click the button below to verify your email:</p>
+        
+        <a href="${verificationLink}" 
+           style="display:inline-block;
+                  padding:10px 20px;
+                  background-color:#2563eb;
+                  color:#ffffff;
+                  text-decoration:none;
+                  border-radius:5px;">
+            Verify Email
+        </a>
 
-        // return res.render("register", {
-        //     success: true,
-        //     errors: {},
-        //     data: {}
-        // });
+        <p>This link will expire in 10 minutes.</p>
+    `
+        });
+
         return res.redirect("/students/login?type=registerSuccess");
 
     } catch (err) {
@@ -344,9 +362,90 @@ const deleteStudent = async (req, res) => {
         // return res.redirect("/students/admin/dashboard");
     }
 };
+// verification token
+const verifyEmailToken = async (req, res) => {
+    try {
+        const { token } = req.query;
+        if (!token) {
+            return res.send("invalid verification link.");
+        }
+        const decoded = verifyToken(token);
+
+        if (decoded.type !== "emailVerification") { // checking the type here
+            return res.send("invalid token type");
+        }
+
+        const student = await Student.findById(decoded.id);
+
+        if (!student) {
+            return res.send("student not found.");
+        }
+        if (student.verificationTokenExpiry < Date.now()) {
+            return res.render("verificationexpired", { email: student.email });
+        }
+
+        if (student.verificationToken !== token) {
+            return res.send("token mismatch.");
+        }
+
+        student.isValid = true;
+        student.verificationToken = null;
+        student.verificationTokenExpiry = null;
+
+        await student.save();
+
+        return res.render("verification.ejs")
+
+    } catch (error) {
+        return res.send("invalid or expired token");
+    }
+};
+
+const resendVerification = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        const student = await Student.findOne({ email });
+
+        if (!student) {
+            return res.send("Student not found.");
+        }
+
+        if (student.isValid) {
+            return res.send("Account already verified.");
+        }
+
+        // 1️⃣ Generate new token
+        const verificationToken = generateEmailVerificationToken(student._id);
+
+        student.verificationToken = verificationToken;
+        student.verificationTokenExpiry = Date.now() + 1 * 60 * 1000;
+
+        await student.save();
+
+        // 2️⃣ Send email again
+        const verificationLink = `http://localhost:4000/students/verify-email?token=${verificationToken}`;
+
+        await sendMail({
+            email: student.email,
+            subject: "Resend Email Verification",
+            content: `
+                <h2>Hello ${student.firstName},</h2>
+                <p>Click below to verify your email:</p>
+                <a href="${verificationLink}">Verify Email</a>
+                <p>This link expires in 10 minutes.</p>
+            `
+        });
+
+        return res.send("Verification email sent again.");
+
+    } catch (error) {
+        return res.send("Something went wrong.");
+    }
+};
 
 
-module.exports = { createStudent, updateProfile, deleteStudent };
+module.exports = { createStudent, updateProfile, deleteStudent, verifyEmailToken, resendVerification };
 
 
 // const deleteStudent = async (req, res) => {
