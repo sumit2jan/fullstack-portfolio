@@ -114,7 +114,7 @@ const createStudent = async (req, res) => {
             Verify Email
         </a>
 
-        <p>This link will expire in 10 minutes.</p>
+        <p>This link will expire in 1 minutes.</p>
     `
         });
 
@@ -397,6 +397,7 @@ const verifyEmailToken = async (req, res) => {
         return res.render("verification.ejs")
 
     } catch (error) {
+        console.log(error);
         return res.send("invalid or expired token");
     }
 };
@@ -404,42 +405,47 @@ const verifyEmailToken = async (req, res) => {
 const resendVerification = async (req, res) => {
     try {
         const { email } = req.body;
-
         const student = await Student.findOne({ email });
-
         if (!student) {
             return res.send("Student not found.");
         }
-
         if (student.isValid) {
             return res.send("Account already verified.");
         }
-
-        // 1️⃣ Generate new token
-        const verificationToken = generateEmailVerificationToken(student._id);
-
+        // 1️ Generate new token
+        const verificationToken = EmailVerificationToken(student._id);
         student.verificationToken = verificationToken;
         student.verificationTokenExpiry = Date.now() + 1 * 60 * 1000;
-
         await student.save();
 
-        // 2️⃣ Send email again
+        // 2️ Send email again
         const verificationLink = `http://localhost:4000/students/verify-email?token=${verificationToken}`;
 
         await sendMail({
             email: student.email,
-            subject: "Resend Email Verification",
+            subject: "Verify Your Email",
             content: `
-                <h2>Hello ${student.firstName},</h2>
-                <p>Click below to verify your email:</p>
-                <a href="${verificationLink}">Verify Email</a>
-                <p>This link expires in 10 minutes.</p>
-            `
+        <h2>Hello ${student.firstName},</h2>
+        <p>Please click the button below to verify your email:</p>
+        
+        <a href="${verificationLink}" 
+           style="display:inline-block;
+                  padding:10px 20px;
+                  background-color:#2563eb;
+                  color:#ffffff;
+                  text-decoration:none;
+                  border-radius:5px;">
+            Verify Email
+        </a>
+
+        <p>This link will expire in 1 minutes.</p>
+        `
         });
 
         return res.send("Verification email sent again.");
 
     } catch (error) {
+        console.log(error);
         return res.send("Something went wrong.");
     }
 };

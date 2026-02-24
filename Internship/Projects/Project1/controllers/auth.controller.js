@@ -18,12 +18,10 @@ const loginStudent = async (req, res) => {
             return res.render("login", {
                 error: "Student does not exist"
             });
-        }   
+        }
 
-        if (!student.isValid && verificationToken == null) {
-            return res.render("login", {
-                error: "Please verify your email first."
-            });
+        if (!student.isValid && student.verificationToken !== null) {
+            return res.render("verificationexpired", { email: student.email });
         }
 
 
