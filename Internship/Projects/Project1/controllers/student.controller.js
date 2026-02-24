@@ -394,7 +394,7 @@ const verifyEmailToken = async (req, res) => {
 
         await student.save();
 
-        return res.render("verification.ejs")
+        return res.render("verification.ejs");
 
     } catch (error) {
         console.log(error);
@@ -442,7 +442,8 @@ const resendVerification = async (req, res) => {
         `
         });
 
-        return res.send("Verification email sent again.");
+        //return res.send("Verification email sent again.");
+        return res.redirect("/students/login?type=verificationEmailSend");
 
     } catch (error) {
         console.log(error);

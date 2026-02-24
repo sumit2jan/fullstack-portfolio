@@ -123,6 +123,22 @@
                 </script>
                 <% } %>
 
+                    <% if (typeof messageType !=='undefined' && messageType==="verificationEmailSend" ) { %>
+                        <script>
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'verification email',
+                                text: 'verification email sent to your mail Id!',
+                                confirmButtonColor: '#7b2cbf',
+                                background: '#19191a', /* Matches dark theme */
+                                color: '#fff'
+                            }).then(() => {
+                                // Clean the URL so the message doesn't pop up again on refresh
+                                window.history.replaceState({}, document.title, "/students/login");
+                            });
+                        </script>
+                        <% } %>
+
 </body>
 
 </html>

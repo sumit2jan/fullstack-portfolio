@@ -20,7 +20,7 @@ const loginStudent = async (req, res) => {
             });
         }
 
-        if (!student.isValid && student.verificationToken !== null) {
+        if (!student.isValid || student.verificationToken == null) {
             return res.render("verificationexpired", { email: student.email });
         }
 
