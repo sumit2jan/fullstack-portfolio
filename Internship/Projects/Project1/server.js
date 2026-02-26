@@ -24,9 +24,10 @@ app.use((req, res, next) => {
 
 //routes
 app.use("/students", require("./routes/student.routes"));
+app.use("/students", require("./routes/admin.routes"));
 app.use("/students", require("./routes/auth.routes"));
 app.use("/students", require("./routes/view.routes"));
-app.use("/mail", require("./routes/sendMailRoute"));
+app.use("/mail", require("./routes/sendMailRoute")); // bs yeh samjhne ke liye banaya tha hamne bs post mai se bhejne ke lie
 const port = process.env.PORT || 4000;
 
 app.listen(port, () => {

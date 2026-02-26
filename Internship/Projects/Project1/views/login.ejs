@@ -54,7 +54,7 @@
                                         </div>
                                         <% } %>
 
-                                            <form method="POST" action="/students/login" enctype="multipart/form-data">
+                                            <form method="POST" action="/students/login" >
                                                 <input class="form-control mb-3" type="email" name="email"
                                                     value="<%= typeof email !== 'undefined' ? email : '' %>"
                                                     placeholder="Email" required>

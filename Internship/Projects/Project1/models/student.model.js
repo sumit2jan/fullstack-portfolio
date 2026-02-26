@@ -46,7 +46,8 @@ const studentSchema = new mongoose.Schema(
       default: false
     },
     verificationToken: {
-      type: String
+      type: String,
+      default: null
     },
     verificationTokenExpiry: {
       type: Date

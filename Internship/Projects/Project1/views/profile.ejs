@@ -196,8 +196,6 @@
             });
         </script>
         <% } %>
-
-            // for the adminmiddleware error
             <% if (typeof messageType !=='undefined' && messageType==="adminRequired" ) { %>
                 <script>
                     Swal.fire({
@@ -212,7 +210,6 @@
                     });
                 </script>
                 <% } %>
-                    // if env email is not matched
                     <% if (typeof messageType !=='undefined' && messageType==="superAdminFailed" ) { %>
                         <script>
                             Swal.fire({
@@ -229,7 +226,6 @@
                         <% } %>
 
 
-                            // for the dashboard error
                             <% if (typeof messageType !=='undefined' && messageType==="DashboardError" ) { %>
                                 <script>
                                     Swal.fire({
@@ -245,7 +241,6 @@
                                 </script>
                                 <% } %>
 
-                                    //Unauthorized for the update Error
                                     <% if (typeof messageType !=='undefined' && messageType==="Unauthorized" ) { %>
                                         <script>
                                             Swal.fire({
@@ -260,7 +255,6 @@
                                             });
                                         </script>
                                         <% } %>
-                                            // update Error occured while updating the user
                                             <% if (typeof messageType !=='undefined' && messageType==="updateError" ) {
                                                 %>
                                                 <script>
@@ -277,7 +271,6 @@
                                                 </script>
                                                 <% } %>
 
-                                                    // profile page error rendering it
                                                     <% if (typeof messageType !=='undefined' &&
                                                         messageType==="ErrorProfilePage" ) { %>
                                                         <script>

@@ -1,6 +1,8 @@
 const Student = require("../models/student.model");
 const StudentDetail = require("../models/studentDetail.model");
 const bcrypt = require("bcryptjs");
+const { sendMail } = require("../utils/helperFuntion");
+const { EmailVerificationToken, verifyToken, generateResetPasswordToken, generateToken } = require("../utils/generate.token");
 
 // login ejs page 
 const getLoginForm = (req, res) => {
@@ -100,7 +102,7 @@ const getEditProfile = async (req, res) => {
 
         res.render("editProfile", {
             student: mergedStudent,
-            messageType: req.query.type|| null,
+            messageType: req.query.type || null,
             errors: {}
         });
 
@@ -111,5 +113,58 @@ const getEditProfile = async (req, res) => {
 };
 
 
+// get forgotpassword
+const getForgotPassword = async (req, res) => {
+    try {
+        res.render("forgot-password");
+    } catch (error) {
+        console.log(error);
+        res.send("Something went wrong.");
+    }
+};
 
-module.exports = { getLoginForm, getProfile, homePage, getRegisterForm, logout, getEditProfile };
+//  get verify Forgot PasswordToken
+const getResetPassword = async (req, res) => {
+    try {
+        const { token } = req.query;
+
+        if (!token) {
+            return res.render("resetexpired");
+        }
+
+        // 1️ Verify JWT
+        const decoded = verifyToken(token);
+
+        // 2️ Check token type
+        if (decoded.type !== "passwordReset") {
+            return res.render("resetexpired");
+        }
+
+        // 3️ Find student & match token
+        const student = await Student.findOne({
+            _id: decoded.id,
+            resetPasswordToken: token
+        });
+
+        if (!student) {
+            return res.render("resetexpired");
+        }
+
+        // 4️ Check expiry
+        if (student.resetPasswordExpire < Date.now()) {
+            return res.render("resetexpired");
+        }
+
+        // 5️ Everything valid → show reset form
+        return res.render("reset-password", {
+            token
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.render("resetexpired");
+    }
+};
+
+
+module.exports = { getLoginForm, getProfile, homePage, getRegisterForm, logout, getEditProfile, getForgotPassword, getResetPassword };
