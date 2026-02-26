@@ -2,7 +2,7 @@ const Student = require("../models/student.model");
 const StudentDetail = require("../models/studentDetail.model");
 const bcrypt = require("bcryptjs");
 const { sendMail } = require("../utils/helperFuntion");
-const { EmailVerificationToken, verifyToken } = require("../utils/generate.token");
+const { EmailVerificationToken, verifyToken, generateResetPasswordToken } = require("../utils/generate.token");
 
 
 //create API
@@ -362,7 +362,7 @@ const deleteStudent = async (req, res) => {
         // return res.redirect("/students/admin/dashboard");
     }
 };
-// verification token
+// verification token yeh saare abhi login mai karne hai
 const verifyEmailToken = async (req, res) => {
     try {
         const { token } = req.query;
@@ -402,6 +402,7 @@ const verifyEmailToken = async (req, res) => {
     }
 };
 
+// resend verification controller
 const resendVerification = async (req, res) => {
     try {
         const { email } = req.body;
@@ -451,8 +452,172 @@ const resendVerification = async (req, res) => {
     }
 };
 
+//forgot password Controller
+const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
 
-module.exports = { createStudent, updateProfile, deleteStudent, verifyEmailToken, resendVerification };
+        const student = await Student.findOne({ email });
+
+        // Security: do NOT reveal if email exists
+        if (!student) {
+            return res.redirect("/students/login?type=resetEmailSend");
+        }
+
+        // if (!student.isValid || student.verificationToken == null) {
+        //     return res.render("verificationexpired", { email: student.email });
+        // }
+
+        // 1️ Generate Reset Token
+        const resetToken = generateResetPasswordToken(student._id);
+
+        // 2️ Store token + expiry in DB
+        student.resetPasswordToken = resetToken;
+        student.resetPasswordExpire = Date.now() + 5 * 60 * 1000; // 5 minutes
+        await student.save();
+
+        // 3️ Create reset link
+        const resetLink = `http://localhost:4000/students/reset-password?token=${resetToken}`;
+
+        // 4️ Send Email
+        await sendMail({
+            email: student.email,
+            subject: "Reset Your Password",
+            content: `
+                <h2>Hello ${student.firstName},</h2>
+                <p>Click the button below to reset your password:</p>
+
+                <a href="${resetLink}" 
+                   style="display:inline-block;
+                          padding:10px 20px;
+                          background-color:#2563eb;
+                          color:#ffffff;
+                          text-decoration:none;
+                          border-radius:5px;">
+                    Reset Password
+                </a>
+
+                <p>This link will expire in 5 minutes.</p>
+            `
+        });
+
+        return res.redirect("/students/login?type=resetEmailSend");
+
+    } catch (error) {
+        console.log(error);
+        return res.send("Something went wrong.");
+    }
+};
+
+// get forgotpassword
+const getForgotPassword = async (req, res) => {
+    try {
+        res.render("forgot-password");
+    } catch (error) {
+        console.log(error);
+        res.send("Something went wrong.");
+    }
+};
+
+// verify Forgot PasswordToken
+const getResetPassword = async (req, res) => {
+    try {
+        const { token } = req.query;
+
+        if (!token) {
+            return res.render("resetexpired");
+        }
+
+        // 1️ Verify JWT
+        const decoded = verifyToken(token);
+
+        // 2️ Check token type
+        if (decoded.type !== "passwordReset") {
+            return res.render("resetexpired");
+        }
+
+        // 3️ Find student & match token
+        const student = await Student.findOne({
+            _id: decoded.id,
+            resetPasswordToken: token
+        });
+
+        if (!student) {
+            return res.render("resetexpired");
+        }
+
+        // 4️ Check expiry
+        if (student.resetPasswordExpire < Date.now()) {
+            return res.render("resetexpired");
+        }
+
+        // 5️ Everything valid → show reset form
+        return res.render("reset-password", {
+            token
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.render("resetexpired");
+    }
+};
+
+
+// updating password here
+const resetPassword = async (req, res) => {
+    try {
+        const { token, password } = req.body;
+
+        if (!token || !password) {
+            return res.render("resetexpired");
+        }
+
+        // 1️ Verify JWT
+        const decoded = verifyToken(token);
+
+        if (decoded.type !== "passwordReset") {
+            return res.render("resetexpired");
+        }
+
+        // 2️ Find student & match token
+        const student = await Student.findOne({
+            _id: decoded.id,
+            resetPasswordToken: token
+        });
+
+        if (!student) {
+            return res.render("resetexpired");
+        }
+
+        // 3️ Check expiry
+        if (student.resetPasswordExpire < Date.now()) {
+            return res.render("resetexpired");
+        }
+
+        // 4️ Hash new password
+        // const hashedPassword = await bcrypt.hash(password, 10);
+        // student.password = hashedPassword;
+
+        const salt = await bcrypt.genSalt(10);
+        student.password = await bcrypt.hash(password, salt);
+
+        // 5️ Clear reset token fields
+        student.resetPasswordToken = null;
+        student.resetPasswordExpire = null;
+
+        await student.save();
+
+        return res.redirect("/students/login?type=passwordResetSuccess");
+
+    } catch (error) {
+        console.log(error);
+        return res.render("resetexpired");
+    }
+};
+
+
+
+module.exports = { createStudent, updateProfile, deleteStudent, verifyEmailToken, resendVerification,forgotPassword,getResetPassword,resetPassword,getForgotPassword};
 
 
 // const deleteStudent = async (req, res) => {

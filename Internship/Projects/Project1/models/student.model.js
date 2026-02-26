@@ -50,6 +50,12 @@ const studentSchema = new mongoose.Schema(
     },
     verificationTokenExpiry: {
       type: Date
+    },
+    resetPasswordToken: {
+      type: String
+    },
+    resetPasswordExpire: {
+      type: Date
     }
   },
   { timestamps: true }

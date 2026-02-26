@@ -54,7 +54,7 @@
                                         </div>
                                         <% } %>
 
-                                            <form method="POST" action="/students/login">
+                                            <form method="POST" action="/students/login" enctype="multipart/form-data">
                                                 <input class="form-control mb-3" type="email" name="email"
                                                     value="<%= typeof email !== 'undefined' ? email : '' %>"
                                                     placeholder="Email" required>
@@ -65,11 +65,15 @@
                                                 <button type="submit"
                                                     class="btn btn-primary w-100 fw-semibold">Login</button>
                                             </form>
-
                                             <div class="text-center mt-3">
                                                 <a href="/students/register"
                                                     style="color: #7b2cbf; text-decoration: none;">Register New
                                                     Account</a>
+                                            </div>
+                                            <div class="text-center mt-2">
+                                                <a href="/students/forgot-password"
+                                                    style="color: #7b2cbf; text-decoration: none;"> Forgot Password
+                                                </a>
                                             </div>
                                             <div class="text-center mt-2">
                                                 <a href="/students" style="color: #7b2cbf;">Back to Home</a>
@@ -138,6 +142,20 @@
                             });
                         </script>
                         <% } %>
+                 <% if (typeof messageType !=='undefined' && messageType==="rsetEmailSend" ) { %>
+                                <script>
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Page Not Renderd",
+                                        text: "Error rendering the profile page",
+                                        confirmButtonColor: "#7b2cbf",
+                                        background: '#19191a',
+                                        color: '#fff'
+                                    }).then(() => {
+                                        window.history.replaceState(null, document.title, "/students");
+                                    });
+                                </script>
+                 <% } %>
 
 </body>
 

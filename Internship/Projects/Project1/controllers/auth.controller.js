@@ -20,7 +20,7 @@ const loginStudent = async (req, res) => {
             });
         }
 
-        if (!student.isValid || student.verificationToken == null) {
+        if (!student.isValid || student.verificationToken !== null) {
             return res.render("verificationexpired", { email: student.email });
         }
 
@@ -53,58 +53,3 @@ const loginStudent = async (req, res) => {
     }
 };
 module.exports = { loginStudent };
-
-// login Api
-// const login = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-//         if (!email || !password) {
-//             return res.status(401).json({
-//                 success: false,
-//                 data: null,
-//                 message: "Email and Password are required"
-//             });
-//         }
-
-//         const student = await Student.findOne({ email }).select("+password");;
-//         if (!student) {
-//             return res.status(401).json({
-//                 success: false,
-//                 data: null,
-//                 message: "Invalid email or password"
-//             });
-//         }
-
-//         const isMatch = await bcrypt.compare(password, student.password);
-//         if (!isMatch) {
-//             return res.status(401).json({
-//                 success: false,
-//                 data: null,
-//                 message: "Invalid email or password"
-//             });
-//         }
-
-//         const token = generateToken(student);
-
-//         if (!token) {
-//             return res.status(401).json({
-//                 success: false,
-//                 data: null,
-//                 message: "token not generated"
-//             });
-//         }
-//         return res.status(200).json({
-//             success: true,
-//             message: "Login successful",
-//             data: { student, token }
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({
-//             success: false,
-//             data: null,
-//             message: "Error during login",
-//             error: error.message
-//         });
-//     }
-// };
