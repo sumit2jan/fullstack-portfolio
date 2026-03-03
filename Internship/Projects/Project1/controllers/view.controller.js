@@ -166,5 +166,10 @@ const getResetPassword = async (req, res) => {
     }
 };
 
+//changePassword
+const getChangePasswordPage = (req, res) => {
+    return res.render("changePassword");
+};
 
-module.exports = { getLoginForm, getProfile, homePage, getRegisterForm, logout, getEditProfile, getForgotPassword, getResetPassword };
+
+module.exports = { getLoginForm, getProfile, homePage, getRegisterForm, logout, getEditProfile, getForgotPassword, getResetPassword,getChangePasswordPage };

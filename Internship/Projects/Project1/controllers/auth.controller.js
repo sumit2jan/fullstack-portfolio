@@ -57,6 +57,69 @@ const loginStudent = async (req, res) => {
     }
 };
 
+// change password api
+const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    const student = await Student.findById(req.user.id).select("+password");
+
+    if (!student) {
+      return res.render("changePassword", {
+        error: "Student not found"
+      });
+    }
+
+    // 1️ Check old password
+    const isMatch = await bcrypt.compare(oldPassword, student.password);
+    if (!isMatch) {
+      return res.render("changePassword", {
+        error: "Old password is incorrect"
+      });
+    }
+
+    // 2️ Check new password match
+    if (newPassword !== confirmPassword) {
+      return res.render("changePassword", {
+        error: "New passwords do not match"
+      });
+    }
+
+    // 3️ Prevent same password reuse
+    const isSamePassword = await bcrypt.compare(newPassword, student.password);
+    if (isSamePassword) {
+      return res.render("changePassword", {
+        error: "New password cannot be same as old password"
+      });
+    }
+
+    // 4️ Optional: Password length validation
+    if (newPassword.length < 6) {
+      return res.render("changePassword", {
+        error: "Password must be at least 6 characters"
+      });
+    }
+
+    // 5️ Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    student.password = hashedPassword;
+
+    await student.save();
+
+    // 6️ Clear JWT Cookie (Force logout)
+    res.clearCookie("token");
+
+    // 7️ Redirect to login page with message
+    return res.redirect("/students/login?type=passwordChanged");
+
+  } catch (error) {
+    console.error(error);
+    return res.render("changePassword", {
+      error: "Something went wrong"
+    });
+  }
+};
+
 // verify after registration 
 const verifyEmailToken = async (req, res) => {
     try {
@@ -257,4 +320,4 @@ const resetPassword = async (req, res) => {
 };
 
 
-module.exports = { loginStudent,verifyEmailToken,resendVerification,forgotPassword,resetPassword };
+module.exports = { loginStudent,verifyEmailToken,resendVerification,forgotPassword,resetPassword,changePassword };

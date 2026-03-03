@@ -142,6 +142,23 @@
                             });
                         </script>
                         <% } %>
+
+                     <% if (typeof messageType !=='undefined' && messageType==="passwordChanged" ) { %>
+                        <script>
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Password Changed',
+                                text: 'Your Password has been Changed!',
+                                confirmButtonColor: '#7b2cbf',
+                                background: '#19191a', /* Matches dark theme */
+                                color: '#fff'
+                            }).then(() => {
+                                // Clean the URL so the message doesn't pop up again on refresh
+                                window.history.replaceState({}, document.title, "/students/login");
+                            });
+                        </script>
+                        <% } %>
+    
                  <% if (typeof messageType !=='undefined' && messageType==="rsetEmailSend" ) { %>
                                 <script>
                                     Swal.fire({
@@ -157,6 +174,7 @@
                                 </script>
                  <% } %>
 
+                 
 </body>
 
 </html>
