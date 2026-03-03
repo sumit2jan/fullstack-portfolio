@@ -5,4 +5,4 @@ const images = new mongoose.Schema({
         required: true
     }
 },{timestamps: true});
-module.exports = mongoose.model("Image",images)
+module.exports = mongoose.model("Image",images);
