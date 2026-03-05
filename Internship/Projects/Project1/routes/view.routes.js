@@ -14,5 +14,4 @@ router.get("/edit/:id", protect, viewController.getEditProfile);//Update
 router.get("/forgot-password",viewController.getForgotPassword);// forgotPassword page link
 router.get("/reset-password",viewController.getResetPassword);// reset password  page link
 
-
 module.exports = router;

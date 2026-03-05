@@ -26,9 +26,8 @@
                     <div class="card glass-card p-4 p-md-5">
 
                         <h2 class="text-center mb-4">Update Profile</h2>
-
                         <!-- ✅ FORM WITH ID -->
-                        <form action="/students/edit/<%= student._id %>" method="POST">
+                        <form action="/students/edit/<%= student._id %>" method="POST" enctype="multipart/form-data">
 
                             <!-- General Error -->
                             <% if (errors?.general) { %>
@@ -158,6 +157,52 @@
                                             <%= errors?.hobbies %>
                                         </small>
                                     </div>
+                                    <!-- Profile Image Upload -->
+                                    <div class="row mb-4 align-items-center">
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Profile Image</label>
+
+                                            <input type="file" name="image" id="imageInput" class="form-control"
+                                                accept="image/*">
+
+                                            <!-- Existing file name -->
+                                            <% if (student.image && student.image !=="/uploads/default.png" ) { %>
+                                                <small class="text-info mt-1 d-block">
+                                                    Current file: <span id="currentFileName">
+                                                        <%= student.image.split('/').pop() %>
+                                                    </span>
+                                                </small>
+                                                <% } else { %>
+                                                    <small class="text-muted mt-1 d-block" id="currentFileName">
+                                                        No image uploaded
+                                                    </small>
+                                                    <% } %>
+
+                                        </div>
+
+                                        <div class="col-md-6 text-center">
+
+                                            <div class="image-container">
+
+                                                <img id="imagePreview"
+                                                    src="<%= student.image || '/uploads/default.png' %>"
+                                                    class="profile-image">
+
+                                                <!-- Delete Button -->
+                                                <button type="button" id="removeImageBtn" class="remove-image-btn">
+                                                    ✕
+                                                </button>
+
+                                                <!-- Hidden input to tell backend to remove image -->
+                                                <input type="hidden" name="removeImage" id="removeImageInput"
+                                                    value="false">
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
 
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-primary px-5">
@@ -174,7 +219,38 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const input = document.getElementById("imageInput");
+        const preview = document.getElementById("imagePreview");
+        const removeBtn = document.getElementById("removeImageBtn");
+        const removeInput = document.getElementById("removeImageInput");
+        const fileLabel = document.getElementById("currentFileName");
+        // Image Preview
+        input.addEventListener("change", function () {
 
+            const file = this.files[0];
+
+            if (!file) return;
+
+            preview.src = URL.createObjectURL(file);
+
+            // show selected file name
+            fileLabel.textContent = "Selected: " + file.name;
+
+        });
+
+        // Remove Image
+        removeBtn.addEventListener("click", function () {
+
+            preview.src = "/uploads/default.png";
+
+            removeInput.value = "true";
+
+            fileLabel.textContent = "No image uploaded";
+
+        });
+
+    </script>
 </body>
 
 </html>

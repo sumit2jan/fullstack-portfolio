@@ -31,7 +31,12 @@
 
                         <div class="text-center mb-5">
                             <div class="mb-3">
-                                <span class="profile-icon">👤</span>
+                                <div class="mb-3 text-center">
+                                    <div class="profile-image-box">
+                                        <img src="<%= student.image ? student.image : '/uploads/default.png' %>"
+                                            alt="Profile Image">
+                                    </div>
+                                </div>
                             </div>
 
                             <h2 class="fw-bold">

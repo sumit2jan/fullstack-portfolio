@@ -14,7 +14,7 @@ body {
     position: absolute;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(142,45,226,0.35) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(142, 45, 226, 0.35) 0%, transparent 70%);
     top: -150px;
     left: -150px;
     filter: blur(100px);
@@ -28,7 +28,8 @@ body {
 .header-container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end; /* Bottom se align karne par zayda clean lagta hai */
+    align-items: flex-end;
+    /* Bottom se align karne par zayda clean lagta hai */
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -103,6 +104,7 @@ body {
     color: #000;
     transform: translateY(-2px);
 }
+
 /* ===============================
    Card Container
 =================================*/
@@ -123,7 +125,8 @@ body {
 .custom-table {
     margin-bottom: 0;
     border-collapse: separate;
-    border-spacing: 0 8px; /* space between rows */
+    border-spacing: 0 8px;
+    /* space between rows */
 }
 
 /* Remove Bootstrap background completely */
@@ -164,7 +167,8 @@ body {
     padding: 18px 22px;
     font-size: 0.9rem;
     vertical-align: middle;
-    color: #e6e6e6 !important; /* FIX for dark inner data */
+    color: #e6e6e6 !important;
+    /* FIX for dark inner data */
 }
 
 /* First column (Name) more important */
@@ -242,12 +246,14 @@ body {
 .action-buttons {
     display: flex;
     justify-content: flex-end;
-    gap: 10px; /* spacing between buttons */
+    gap: 10px;
+    /* spacing between buttons */
     align-items: center;
 }
 
 .action-buttons form {
-    margin: 0; /* remove default form spacing */
+    margin: 0;
+    /* remove default form spacing */
 }
 
 
@@ -280,4 +286,12 @@ body {
 
 .btn-delete:active {
     transform: scale(0.96);
+}
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #334155;
 }

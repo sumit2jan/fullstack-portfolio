@@ -68,6 +68,7 @@
                 <table class="table custom-table">
                     <thead>
                         <tr>
+                            <th>IMAGE</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Gender</th>
@@ -84,6 +85,9 @@
                     <tbody>
                         <% students.forEach(student=> { %>
                             <tr>
+                                <td>
+                                    <img src="<%= student.detail?.image || '/uploads/default.png' %>" class="student-avatar">
+                                </td>
                                 <td class="fw-semibold">
                                     <%= student.firstName %>
                                         <%= student.lastName %>

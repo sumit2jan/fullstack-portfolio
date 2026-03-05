@@ -3,6 +3,8 @@ const StudentDetail = require("../models/studentDetail.model");
 const bcrypt = require("bcryptjs");
 const { sendMail } = require("../utils/helperFuntion");
 const { EmailVerificationToken, verifyToken, generateResetPasswordToken } = require("../utils/generate.token");
+const fs = require("fs");
+const path = require("path");
 
 
 //create API
@@ -15,6 +17,11 @@ const createStudent = async (req, res) => {
             age, gender, phone, pan, adhar, address, country, hobbies, dob
         } = req.body;
 
+        //Handle Image Upload
+        const imagePath = req.file
+            ? "/uploads/" + req.file.filename
+            : "/uploads/default.png";
+        let uploadedImage = req.file ? req.file.filename : null;
         // 1 hobbies logic
         let processedHobbies = [];
         if (hobbies) {
@@ -41,7 +48,8 @@ const createStudent = async (req, res) => {
             address,
             country,
             hobbies: processedHobbies,
-            dob
+            dob,
+            image: imagePath
         });
 
         //3 Validate BOTH;
@@ -144,6 +152,17 @@ const createStudent = async (req, res) => {
             await Student.findByIdAndDelete(studentId);
         }
 
+        // Delete uploaded image if registration fails
+        if (uploadedImage) {
+
+            const filePath = path.join(__dirname, "..", "uploads", uploadedImage);
+
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+
+        }
+
         return res.render("register", {
             errors,
             data: req.body,
@@ -165,10 +184,10 @@ const updateProfile = async (req, res) => {
         // --- ADDED THIS LINE TO GET STUDENT EMAIL ---
         const targetStudent = await Student.findById(paramId);
         if (!targetStudent) return res.redirect("/students/profile?type=NotFound");
-
+        const existingDetail = await StudentDetail.findOne({ student: paramId });
         const {
             firstName, lastName, age, gender, phone, pan, adhar,
-            address, country, hobbies, dob
+            address, country, hobbies, dob, removeImage
         } = req.body;
 
         const errors = {};
@@ -193,7 +212,7 @@ const updateProfile = async (req, res) => {
                 student: {
                     _id: paramId,
                     email: targetStudent.email, // <--- CHANGED THIS
-                    firstName, lastName, age, gender, phone, pan, adhar, address, country, dob,
+                    firstName, lastName, age, gender, phone, pan, adhar, address, country, dob, image: existingDetail?.image,
                     hobbies: hobbies ? (typeof hobbies === 'string' ? hobbies.split(",").map(h => h.trim()) : hobbies) : []
                 },
                 errors: errorObj
@@ -222,6 +241,36 @@ const updateProfile = async (req, res) => {
         if (hobbies) {
             detailUpdate.hobbies = [...new Set(hobbies.split(",").map(h => h.trim()).filter(Boolean))];
         }
+        // Remove image
+        if (removeImage === "true") {
+
+            if (existingDetail?.image && existingDetail.image !== "/uploads/default.png") {
+
+                const oldPath = path.join(__dirname, "..", existingDetail.image);
+
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            }
+
+            detailUpdate.image = "/uploads/default.png";
+        }
+
+        // Upload new image
+        if (req.file) {
+
+            // delete old image if exists
+            if (existingDetail?.image && existingDetail.image !== "/uploads/default.png") {
+
+                const oldPath = path.join(__dirname, "..", existingDetail.image);
+
+                if (fs.existsSync(oldPath)) {
+                    fs.unlinkSync(oldPath);
+                }
+            }
+
+            detailUpdate.image = "/uploads/" + req.file.filename;
+        }
 
         // 4. Update Database
         if (Object.keys(basicUpdate).length > 0) {
@@ -243,7 +292,7 @@ const updateProfile = async (req, res) => {
 
         // --- FETCH STUDENT AGAIN FOR CATCH BLOCK ---
         const targetStudent = await Student.findById(paramId);
-
+        const existingDetail = await StudentDetail.findOne({ student: paramId });
         if (error.name === 'ValidationError') {
             Object.keys(error.errors).forEach((key) => {
                 catchErrors[key] = error.errors[key].message;
@@ -254,6 +303,7 @@ const updateProfile = async (req, res) => {
                     _id: paramId,
                     email: targetStudent.email, // <--- CHANGED THIS
                     ...req.body,
+                    image: existingDetail?.image,
                     hobbies: req.body.hobbies ? (typeof req.body.hobbies === 'string' ? req.body.hobbies.split(',').map(h => h.trim()) : req.body.hobbies) : []
                 },
                 errors: catchErrors
@@ -363,4 +413,4 @@ const deleteStudent = async (req, res) => {
     }
 };
 
-module.exports = { createStudent, updateProfile, deleteStudent};
+module.exports = { createStudent, updateProfile, deleteStudent };

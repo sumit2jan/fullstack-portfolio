@@ -6,29 +6,34 @@ const storage = multer.diskStorage({
         cb(null, "uploads/");
     },
     filename: function (req, file, cb) {
-        const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9) + "-" + path.extname(file.originalname);
+        const uniqueName =
+            Date.now() +
+            "-" +
+            Math.round(Math.random() * 1e9) +
+            path.extname(file.originalname);
+
         cb(null, uniqueName);
     },
 });
 
-//filtering the file here
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|webp/;
-    const isValid = allowedTypes.test(
+    const allowedTypes = /jpeg|jpg|png/;
+    const extname = allowedTypes.test(
         path.extname(file.originalname).toLowerCase()
     );
-    if (isValid) {
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
         cb(null, true);
     } else {
-        cb(new error("only images are allowed!"), false);
+        cb(new Error("Only image files allowed"));
     }
 };
 
-// main middleware function 
 const upload = multer({
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-    fileFilter: fileFilter,
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter,
 });
 
 module.exports = upload;

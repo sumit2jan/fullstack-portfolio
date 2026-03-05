@@ -85,6 +85,10 @@ const studentDetailSchema = new mongoose.Schema(
             type: Date,
             required: [true, "Date of Birth is required"],
         },
+        image: {
+            type: String,
+            default: "/uploads/default.png"
+        }
     },
     { timestamps: true }
 );
