@@ -57,7 +57,7 @@
             position: absolute;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(142,45,226,0.4) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(142, 45, 226, 0.4) 0%, transparent 70%);
             top: -100px;
             left: -100px;
             filter: blur(80px);
@@ -68,4 +68,238 @@
             color: #aaaaaa;
         }
 
-        
+        /* =========================================
+   Latest Videos Section - Modernized
+   ========================================= */
+
+        .latest-videos {
+            padding: 60px 0 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .latest-videos h3 {
+            letter-spacing: 1px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Premium Glassmorphism Video Card */
+        .video-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hover Animation - Purple Glow & Lift */
+        .video-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(142, 45, 226, 0.4);
+            box-shadow: 0 15px 35px rgba(142, 45, 226, 0.2), 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Video Wrapper for better clipping */
+        .video-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+
+        .video-card video {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-card:hover video {
+            opacity: 0.95;
+        }
+
+        /* =========================================
+   Aesthetic Uploader Info Section
+   ========================================= */
+        .video-info-container {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 16px;
+            padding-top: 16px;
+        }
+
+        /* Premium Avatar Ring Effect */
+        .uploader-avatar-premium {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            /* Outer glowing gradient ring (Instagram story style) */
+            background: linear-gradient(135deg, #ff007f, #8e2de2, #4a00e0);
+            padding: 2px;
+            /* Thickness of the ring */
+            box-shadow: 0 0 12px rgba(142, 45, 226, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Inner dark circle of the avatar */
+        .avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Card Hover effect updates the avatar glow */
+        .video-card:hover .uploader-avatar-premium {
+            transform: scale(1.05);
+            box-shadow: 0 0 18px rgba(255, 0, 127, 0.4);
+        }
+
+        /* Premium Typography for Name */
+        .upload-label {
+            font-size: 0.65rem;
+            color: #888;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .upload-name {
+            font-size: 0.95rem;
+            color: #f8f9fa;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* =========================================
+   Animations
+   ========================================= */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.7s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Ensure the image fits perfectly inside the glowing ring */
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Keeps image aspect ratio without stretching */
+            border-radius: 50%;
+        }
+
+        /* =========================================
+   Premium Heading Styles
+   ========================================= */
+
+        /* =========================================
+   Ultra-Aesthetic Heading Styles
+   ========================================= */
+
+        .heading-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Premium Small Badge Above Heading */
+        .aesthetic-subtitle {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #b57cff;
+            /* Light pastel purple */
+            background: rgba(142, 45, 226, 0.15);
+            /* Glassy purple background */
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: 1px solid rgba(142, 45, 226, 0.3);
+            box-shadow: 0 0 15px rgba(142, 45, 226, 0.2);
+            display: inline-block;
+        }
+
+        /* The Animated Gradient Text */
+        .gradient-heading {
+            font-size: 3rem;
+            /* Bada aur bold */
+            font-weight: 800;
+            letter-spacing: -1.5px;
+
+            /* The Magic: A wide gradient that moves */
+            background: linear-gradient(to right,
+                    #ffffff 20%,
+                    #a8b3e4 30%,
+                    #ff75c3 50%,
+                    #8e2de2 70%,
+                    #ffffff 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            /* Animation calling */
+            animation: shineText 4s linear infinite;
+
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Keyframes to move the gradient across the text */
+        @keyframes shineText {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* Hyper-Realistic Fire Emoji Glow */
+        .fire-icon {
+            display: inline-block;
+            -webkit-text-fill-color: initial;
+            font-size: 2.5rem;
+            margin-left: 12px;
+            filter: drop-shadow(0 0 12px rgba(255, 85, 0, 0.6));
+            animation: aestheticFire 3s ease-in-out infinite;
+        }
+
+        /* Smooth floating and glowing animation */
+        @keyframes aestheticFire {
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+                filter: drop-shadow(0 0 12px rgba(255, 85, 0, 0.6));
+            }
+            50% {
+                transform: translateY(-5px) scale(1.1);
+                filter: drop-shadow(0 0 25px rgba(255, 120, 0, 0.9));
+            }
+        }

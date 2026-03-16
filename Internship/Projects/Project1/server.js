@@ -26,6 +26,7 @@ app.use((req, res, next) => {
 //routes
 app.use("/students", require("./routes/student.routes"));
 app.use("/students", require("./routes/admin.routes"));
+app.use("/students", require("./routes/video.routes"));
 app.use("/students", require("./routes/auth.routes"));
 app.use("/students", require("./routes/view.routes"));
 app.use("/mail", require("./routes/sendMailRoute")); // bs yeh samjhne ke liye banaya tha hamne bs post mai se bhejne ke lie

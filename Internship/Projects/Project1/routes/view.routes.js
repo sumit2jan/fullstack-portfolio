@@ -13,5 +13,7 @@ router.get("/logout",viewController.logout); // show user profile page
 router.get("/edit/:id", protect, viewController.getEditProfile);//Update
 router.get("/forgot-password",viewController.getForgotPassword);// forgotPassword page link
 router.get("/reset-password",viewController.getResetPassword);// reset password  page link
+router.get("/video-dashboard", protect, viewController.getVideoDashboard);// vedio DashBoard
+router.get("/view/:id", protect, viewController.viewStudentProfile); // media view for the profile
 
 module.exports = router;

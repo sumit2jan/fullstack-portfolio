@@ -27,9 +27,9 @@
 
             <div class="collapse navbar-collapse justify-content-end" id="navMenu">
                 <ul class="navbar-nav gap-3 align-items-center">
-                    
+
                     <% if (isLoggedIn) { %>
-                        
+
                         <li class="nav-item">
                             <a class="nav-link text-light" href="/students/profile">My Profile</a>
                         </li>
@@ -37,17 +37,17 @@
                             <a class="btn btn-danger" href="/students/logout">Logout</a>
                         </li>
 
-                    <% } else { %>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link text-light" href="/students/login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-primary" href="/students/register">Sign Up</a>
-                        </li>
+                        <% } else { %>
 
-                    <% } %>
-                    </ul>
+                            <li class="nav-item">
+                                <a class="nav-link text-light" href="/students/login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary" href="/students/register">Sign Up</a>
+                            </li>
+
+                            <% } %>
+                </ul>
             </div>
         </div>
     </nav>
@@ -67,30 +67,94 @@
                     </p>
 
                     <div class="d-flex gap-3">
-                        
+
                         <% if (isLoggedIn) { %>
-                            
+
                             <a href="/students/profile" class="btn btn-primary shadow">
                                 Go to Profile
                             </a>
-
-                        <% } else { %>
-                            
-                            <a href="/students/login" class="btn btn-primary shadow">
-                                Get Started
+                            <a href="/students/video-dashboard" class="btn btn-primary shadow">
+                                View Users
                             </a>
 
-                            <a href="/students/register" class="btn btn-outline-light">
-                                Sign Up
-                            </a>
+                            <% } else { %>
 
-                        <% } %>
-                        </div>
+                                <a href="/students/login" class="btn btn-primary ">
+                                    Get Started
+                                </a>
+
+                                <a href="/students/register" class="btn btn-outline-light">
+                                    Sign Up
+                                </a>
+
+                                <% } %>
+                    </div>
 
                 </div>
             </div>
         </div>
     </section>
+    <section class="container latest-videos py-5">
+        <div class="text-center mb-5">
+            <div class="text-center mb-5 heading-wrapper">
+                <span class="aesthetic-subtitle">Trending Now</span>
+
+                <h3 class="gradient-heading mt-3">Latest Videos <span class="fire-icon">🔥</span></h3>
+            </div>
+            <div class="row g-4">
+                <% if (latestVideos && latestVideos.length> 0) { %>
+                    <% latestVideos.forEach((video, index)=> { %>
+
+                        <div class="col-md-6 col-lg-4 fade-in-up" style="animation-delay: <%= index * 0.1 %>s;">
+                            <div class="video-card">
+
+                                <div class="video-wrapper">
+                                    <video controls preload="metadata">
+                                        <source src="<%= video.videoUrl %>" type="video/mp4">
+                                        Your browser does not support the video.
+                                    </video>
+                                </div>
+
+                                <div class="video-info-container mt-3 pt-3">
+                                    <div class="d-flex align-items-center">
+
+                                        <div class="uploader-avatar-premium me-3">
+                                            <div class="avatar-inner">
+                                                <img src="<%= video.uploaderImage %>" alt="Profile" class="profile-pic">
+                                            </div>
+                                        </div>
+
+                                        <div class="uploader-details text-start">
+                                            <span class="upload-label">Creator</span>
+                                            <span class="upload-name d-block">
+                                                <%= video.studentId.firstName %>
+                                                    <%= video.studentId.lastName %>
+                                            </span>
+                                        </div>
+
+                                        <div class="ms-auto">
+                                            <span
+                                                class="badge rounded-pill bg-dark border border-secondary text-secondary"
+                                                style="font-size: 0.65rem;">
+                                                Student
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="col-12 text-center py-5 fade-in-up">
+                                    <p class="text-muted fs-5">No videos available yet. Be the first to upload!</p>
+                                </div>
+                                <% } %>
+
+            </div>
+    </section>
+
 
     <footer class="text-center py-4">
         © 2026 Gradly — Built for Modern Education

@@ -19,9 +19,9 @@ const createStudent = async (req, res) => {
 
         //Handle Image Upload
         const imagePath = req.file
-            ? "/uploads/" + req.file.filename
+            ? "/uploads/images/profile/" + req.file.filename
             : "/uploads/default.png";
-        let uploadedImage = req.file ? req.file.filename : null;
+        uploadedImage = req.file ? req.file.filename : null;
         // 1 hobbies logic
         let processedHobbies = [];
         if (hobbies) {
@@ -81,6 +81,14 @@ const createStudent = async (req, res) => {
 
         // 4 If any validation error → return immediately
         if (Object.keys(errors).length > 0) {
+
+            // delete uploaded image if validation fails
+            if (uploadedImage) {
+                const filePath = path.join(__dirname, "..", "uploads", "images","profile", uploadedImage);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            }
             return res.render("register", {
                 errors,
                 data: req.body,
@@ -126,7 +134,7 @@ const createStudent = async (req, res) => {
     `
         });
 
-        return res.redirect("/students/login?type=registerSuccess");
+        return res.redirect("/students/login?type=verificationEmailSend");
 
     } catch (err) {
         console.error("❌ Registration Error:", err);
@@ -151,16 +159,14 @@ const createStudent = async (req, res) => {
         if (studentId) {
             await Student.findByIdAndDelete(studentId);
         }
-
         // Delete uploaded image if registration fails
         if (uploadedImage) {
 
-            const filePath = path.join(__dirname, "..", "uploads", uploadedImage);
+           const filePath = path.join(__dirname, "..", "uploads", "images","profile", uploadedImage);
 
             if (fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath);
             }
-
         }
 
         return res.render("register", {
@@ -269,7 +275,7 @@ const updateProfile = async (req, res) => {
                 }
             }
 
-            detailUpdate.image = "/uploads/" + req.file.filename;
+            detailUpdate.image = "/uploads/images/profile/" + req.file.filename;
         }
 
         // 4. Update Database
