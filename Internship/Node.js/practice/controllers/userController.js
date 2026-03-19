@@ -1,25 +1,29 @@
 const user = require("../models/user");
+const bcrypt = require('bcryptjs')
 
 createUser = async (req, res) => {
     try {
-        const { name, age, gender, email } = req.body;
+        const { name, age, gender, email, password } = req.body;
 
-        if (!name || !age || !gender || !email) {
-             return res.status(401).json({
-            success: false,
-            message: "All fields are required.",
-            data: null,
-        });
+        if (!name || !age || !gender || !email || !password) {
+            return res.status(401).json({
+                success: false,
+                message: "All fields are required.",
+                data: null,
+            });
         }
-        //creating instance of student
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const user1 = new user({
             name,
             age,
             gender,
             email,
+            password: hashedPassword,
         });
 
-        const userSaved = await user1.save();// saving into the DB
+        const userSaved = await user1.save();
 
         return res.status(201).json({
             success: true,
@@ -140,4 +144,4 @@ const deleteUser = async (req, res) => {
     }
 }
 
-module.exports = { getUser, createUser, getUserById,updateUser,deleteUser}
+module.exports = { getUser, createUser, getUserById, updateUser, deleteUser }
