@@ -9,7 +9,8 @@ import { ToastContainer } from 'react-toastify';
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Hello from "./pages/Hello";
+import Dashboard from "./pages/Dashboard";
+import Cat from "./Animations/Cat";
 import { AuthProvider } from './context/Authcontext';
 import PrivateRoute from "./middleware/privateRoute";
 
@@ -27,9 +28,12 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
+            <Route path='/dashboard' element={<Dashboard />} />
             <Route path='*' element={<p>404 Not Found</p>} />
+
+
             <Route element={<PrivateRoute />}>
-            <Route path="/hello" element={<Hello/>} />
+            <Route path='/cat' element={<Cat />} />
           </Route>
           </Routes>
         </BrowserRouter>

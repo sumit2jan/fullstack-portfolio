@@ -9,11 +9,11 @@ import { useAuth } from '../context/Authcontext'
 const Login = () => {
     const { login, token } = useAuth();
     const navigate = useNavigate();
-    // useEffect(() => {
-    //     if (token) {
-    //         navigate("/");
-    //     }
-    // }, [token, navigate]);
+    useEffect(() => {
+        if (token) {
+            navigate("/");
+        }
+    }, [token, navigate]);
     const formik = useFormik({
         initialValues: {
             email: "",

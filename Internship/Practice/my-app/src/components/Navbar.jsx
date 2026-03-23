@@ -6,7 +6,7 @@ import { useAuth } from "../context/Authcontext";
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const {logout} = useAuth();
+  const { logout } = useAuth();
 
   // ✅ Check login
   const token = localStorage.getItem("token");
@@ -51,6 +51,7 @@ const Navbar = () => {
               </Link>
             </li>
 
+
             {/* 👇 If NOT logged in */}
             {!token && (
               <>
@@ -91,10 +92,10 @@ const Navbar = () => {
 
                 <li className="nav-item">
                   <Link
-                    className={`nav-link ${location.pathname === "/hello" ? "active-link" : ""}`}
-                    to="/hello"
+                    className={`nav-link ${location.pathname === "/cat" ? "active-link" : ""}`}
+                    to="/cat"
                   >
-                    Hello
+                    Animations
                   </Link>
                 </li>
               </>
