@@ -1,8 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../context/Authcontext'
+
 
 
 const Home = () => {
+  const { token } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -20,12 +23,23 @@ const Home = () => {
               A clean and modern React app with beautiful UI and smooth experience.
             </p>
 
-            <button
-              className="btn btn-danger mt-3 px-4"
-              onClick={() => navigate("/signup")}
-            >
-              Get Started
-            </button>
+            {token ? (
+              <button
+                className="btn btn-danger mt-3 px-4"
+                onClick={() => navigate("/dashboard")}
+              >
+                DashBoard
+              </button>
+            ) : (
+              <button
+                className="btn btn-danger mt-3 px-4"
+                onClick={() => navigate("/signup")}
+              >
+                Get Started
+              </button>
+            )}
+
+
           </div>
 
           {/* Right Side (Visual Space) */}

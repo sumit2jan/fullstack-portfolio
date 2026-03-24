@@ -1,5 +1,7 @@
 const user = require("../models/user");
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+
 
 createUser = async (req, res) => {
     try {
@@ -90,9 +92,31 @@ getUserById = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedUser = await user.findByIdAndUpdate(id, req.body, {
-            new: true,            //Return updated data (not old)
-            runValidators: true,  //Enforce schema rules
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                status: false,
+                message: "Invalid user ID",
+            });
+        }
+
+        const { name, age } = req.body;
+        const updateData = {};
+
+
+        if (name !== undefined) updateData.name = name;
+        if (age !== undefined) updateData.age = age;
+
+        if (Object.keys(updateData).length === 0) {
+            return res.status(400).json({
+                status: false,
+                message: "No valid fields provided for update",
+            });
+        }
+
+        const updatedUser = await user.findByIdAndUpdate(id, updateData, {
+            new: true,
+            runValidators: true,
         });
         if (!updatedUser) {
             return res.status(404).json({

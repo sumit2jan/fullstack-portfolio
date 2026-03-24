@@ -89,7 +89,14 @@ const Navbar = () => {
                     Logout
                   </button>
                 </li>
-
+                <li className="nav-item">
+                  <Link
+                    className={`nav-link ${location.pathname === "/dashboard" ? "active-link" : ""}`}
+                    to="/dashboard"
+                  >
+                    DashBoard
+                  </Link>
+                </li>
                 <li className="nav-item">
                   <Link
                     className={`nav-link ${location.pathname === "/cat" ? "active-link" : ""}`}

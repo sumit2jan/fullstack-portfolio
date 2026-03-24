@@ -7,42 +7,53 @@ import Swal from "sweetalert2";
 
 const Dashboard = () => {
     const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]);
     const [search, setSearch] = useState("");
-
     const [selectedUser, setSelectedUser] = useState(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(2);
+    const [totalRows, setTotalRows] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
+
 
 
     // Fetch Users
     const getUsers = async () => {
         try {
-            const token = localStorage.getItem("token");
+            setLoading(true);
 
-            const res = await api.get("/api/user/read", {
-                //headers: { Authorization: `Bearer ${token}` },
-            });
-            //console.log(res)
+            const res = await api.get(
+                `/api/user/read?page=${page}&limit=${limit}${debouncedSearch ? `&search=${debouncedSearch}` : ""}`);
 
             setUsers(res.data.data);
-            setFilteredUsers(res.data.data);
+            setTotalRows(res.data.totalUsers);
+
         } catch (error) {
             toast.error("Failed to fetch users");
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         getUsers();
-    }, []);
+    }, [page, debouncedSearch, limit]);
 
-    // Search
     useEffect(() => {
-        const result = users.filter((user) =>
-            user.name.toLowerCase().includes(search.toLowerCase()) ||
-            user.email.toLowerCase().includes(search.toLowerCase())
-        );
-        setFilteredUsers(result);
-    }, [search, users]);
+        setPage(1);
+    }, [debouncedSearch]);
+
+    //search logic
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
+
 
     // Open Edit Modal
     const handleEdit = (user) => {
@@ -53,11 +64,12 @@ const Dashboard = () => {
     // Update User
     const handleUpdate = async (updatedUser) => {
         try {
-            const token = localStorage.getItem("token");
+            //const token = localStorage.getItem("token");
 
             await api.put(`/api/user/update/${updatedUser._id}`, updatedUser, {
-                headers: { Authorization: `Bearer ${token}` },
+                //headers: { Authorization: `Bearer ${token}` },
             });
+            console.log("Updated User:", updatedUser);
 
             toast.success("User updated");
             setIsEditOpen(false);
@@ -81,14 +93,16 @@ const Dashboard = () => {
 
         if (result.isConfirmed) {
             try {
-                const token = localStorage.getItem("token");
-
                 await api.delete(`/api/user/delete/${user._id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
+                    //headers: { Authorization: `Bearer ${token}` },
                 });
 
                 Swal.fire("Deleted!", "User has been deleted.", "success");
-                getUsers();
+                if (users.length === 1 && page > 1) {
+                    setPage(page - 1);
+                } else {
+                    getUsers();
+                }
             } catch (error) {
                 Swal.fire("Error!", "Delete failed.", "error");
             }
@@ -99,7 +113,7 @@ const Dashboard = () => {
     const columns = [
         { name: "Name", selector: (row) => row.name, sortable: true },
         { name: "Email", selector: (row) => row.email },
-        { name: "Age", selector: (row) => row.age },
+        { name: "Age", selector: (row) => row.age, sortable: true },
         { name: "Gender", selector: (row) => row.gender },
         {
             name: "Actions",
@@ -139,9 +153,20 @@ const Dashboard = () => {
 
             <DataTable
                 columns={columns}
-                data={filteredUsers}
+                data={users}
                 pagination
+                paginationServer
+                paginationTotalRows={totalRows}
+                paginationPerPage={limit}
+                paginationRowsPerPageOptions={[2, 4, 6, 10]}
+                onChangePage={(page) => setPage(page)}
+                onChangeRowsPerPage={(newLimit, page) => {
+                    setLimit(newLimit);
+                    setPage(page);
+                }}
+                progressPending={loading}
                 highlightOnHover
+                persistTableHead
             />
 
             {/* EDIT MODAL */}

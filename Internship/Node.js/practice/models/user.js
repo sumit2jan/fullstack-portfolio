@@ -34,5 +34,7 @@ const userSchema = new mongoose.Schema({// yha schema define kra maine
         timestamps: true,
     });
 
+    userSchema.index({ name: 1, email: 1 });
+
   
 module.exports = mongoose.model("user", userSchema);

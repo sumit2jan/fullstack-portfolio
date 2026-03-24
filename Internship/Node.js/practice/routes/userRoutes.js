@@ -12,8 +12,8 @@ router.get("/read", adminControl.getAllUser);  //DashBoard
 
 
 //router.get("/:id", userControl.getUserById); 
-//router.patch("/update/:id", userControl.updateUser);
-//router.delete("/delete/:id", userControl.deleteUser);
+router.put("/update/:id", userControl.updateUser);
+router.delete("/delete/:id", userControl.deleteUser);
 
 // auth controller
 router.post("/login", authControl.loginUser);

@@ -22,19 +22,18 @@ function App() {
     <>
       <AuthProvider>
         <BrowserRouter>
-          <ToastContainer position='top-right' autoClose={2000} />
+          <ToastContainer position='top-right' autoClose={1000} />
           <Navbar />
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
-            <Route path='/dashboard' element={<Dashboard />} />
             <Route path='*' element={<p>404 Not Found</p>} />
-
-
+            {/* Private Routes */}
             <Route element={<PrivateRoute />}>
-            <Route path='/cat' element={<Cat />} />
-          </Route>
+              <Route path='/dashboard' element={<Dashboard />} />
+              <Route path='/cat' element={<Cat />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </AuthProvider>
