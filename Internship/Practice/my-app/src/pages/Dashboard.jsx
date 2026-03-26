@@ -15,6 +15,8 @@ const Dashboard = () => {
     const [totalRows, setTotalRows] = useState(0);
     const [loading, setLoading] = useState(false);
     const [debouncedSearch, setDebouncedSearch] = useState(search);
+    const [sortBy, setSortBy] = useState("createdAt");
+    const [order, setOrder] = useState("desc");
 
 
 
@@ -24,8 +26,7 @@ const Dashboard = () => {
             setLoading(true);
 
             const res = await api.get(
-                `/api/user/read?page=${page}&limit=${limit}${debouncedSearch ? `&search=${debouncedSearch}` : ""}`);
-
+                `/api/user/read?page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}${debouncedSearch ? `&search=${debouncedSearch}` : ""}`);
             setUsers(res.data.data);
             setTotalRows(res.data.totalUsers);
 
@@ -38,7 +39,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         getUsers();
-    }, [page, debouncedSearch, limit]);
+    }, [page, debouncedSearch, limit, sortBy, order]);
 
     useEffect(() => {
         setPage(1);
@@ -111,9 +112,9 @@ const Dashboard = () => {
 
     // Table Columns
     const columns = [
-        { name: "Name", selector: (row) => row.name, sortable: true },
+        { name: "Name", selector: (row) => row.name, sortable: true, sortField: "name" },
         { name: "Email", selector: (row) => row.email },
-        { name: "Age", selector: (row) => row.age, sortable: true },
+        { name: "Age", selector: (row) => row.age, sortable: true, sortField: "age" },
         { name: "Gender", selector: (row) => row.gender },
         {
             name: "Actions",
@@ -167,6 +168,12 @@ const Dashboard = () => {
                 progressPending={loading}
                 highlightOnHover
                 persistTableHead
+                sortServer
+                onSort={(column, sortDirection) => {
+                    setSortBy(column.sortField);
+                    setOrder(sortDirection);
+                    setPage(1); //best practice
+                }}
             />
 
             {/* EDIT MODAL */}
