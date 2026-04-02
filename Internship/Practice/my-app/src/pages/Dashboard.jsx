@@ -17,6 +17,7 @@ const Dashboard = () => {
     const [debouncedSearch, setDebouncedSearch] = useState(search);
     const [sortBy, setSortBy] = useState("createdAt");
     const [order, setOrder] = useState("desc");
+    const [gender, setGender] = useState("");
 
 
 
@@ -26,7 +27,8 @@ const Dashboard = () => {
             setLoading(true);
 
             const res = await api.get(
-                `/api/user/read?page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}${debouncedSearch ? `&search=${debouncedSearch}` : ""}`);
+                `/api/user/read?page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}${debouncedSearch ? `&search=${debouncedSearch}` : ""
+                }${gender ? `&gender=${gender}` : ""}`);
             setUsers(res.data.data);
             setTotalRows(res.data.totalUsers);
 
@@ -39,7 +41,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         getUsers();
-    }, [page, debouncedSearch, limit, sortBy, order]);
+    }, [page, debouncedSearch, limit, sortBy, order, gender]);
 
     useEffect(() => {
         setPage(1);
@@ -115,7 +117,29 @@ const Dashboard = () => {
         { name: "Name", selector: (row) => row.name, sortable: true, sortField: "name" },
         { name: "Email", selector: (row) => row.email },
         { name: "Age", selector: (row) => row.age, sortable: true, sortField: "age" },
-        { name: "Gender", selector: (row) => row.gender },
+        {
+            name: (
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span>Gender</span>
+
+                    <select
+                        className="form-select form-select-sm"
+                        style={{ width: "90px" }}
+                        value={gender}
+                        onChange={(e) => {
+                            setGender(e.target.value);
+                            setPage(1);
+                        }}
+                    >
+                        <option value="">All</option>
+                        <option value="male">M</option>
+                        <option value="female">F</option>
+                        <option value="other">O</option>
+                    </select>
+                </div>
+            ),
+            selector: (row) => row.gender,
+        },
         {
             name: "Actions",
             cell: (row) => (
@@ -144,13 +168,15 @@ const Dashboard = () => {
                 Dashboard <span style={{ color: "#dc3545" }}>Users</span>
             </h2>
 
-            <input
-                type="text"
-                placeholder="Search by name or email..."
-                className="form-control my-3"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-            />
+            <div className="mb-3 p-3 border rounded bg-light">
+                <input
+                    type="text"
+                    placeholder="Search by name or email..."
+                    className="form-control my-3"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </div>
 
             <DataTable
                 columns={columns}

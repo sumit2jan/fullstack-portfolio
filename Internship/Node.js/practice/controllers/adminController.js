@@ -8,6 +8,7 @@ const getAllUser = async (req, res) => {
         let page = parseInt(req.query.page) || 1;
         let limit = parseInt(req.query.limit) || 2;
         const search = req.query.search || "";
+        const gender = req.query.gender || "";
 
         const sortBy = req.query.sortBy || "createdAt";
         const order = req.query.order === "asc" ? 1 : -1;
@@ -20,24 +21,24 @@ const getAllUser = async (req, res) => {
         const skip = (page - 1) * limit;
 
         let query = {};
-
         if (search) {
-            query = {
-                $or: [
-                    { name: { $regex: `^${search}`, $options: "i" } },
-                    { email: { $regex: `^${search}`, $options: "i" } }
-                ]
-            };
+            query.$or = [
+                { name: { $regex: `^${search}`, $options: "i" } },
+                { email: { $regex: `^${search}`, $options: "i" } }
+            ];
+        }
+        if (gender) {
+            query.gender = gender;
         }
 
         const allowedSortFields = ["name", "age", "createdAt"];
         let sortField = allowedSortFields.includes(sortBy) ? sortBy : "createdAt";
 
         const users = await User.find(query)
-        .sort({ [sortField]: order })
-        .skip(skip)
-        .limit(limit)
-        .lean();
+            .sort({ [sortField]: order })
+            .skip(skip)
+            .limit(limit)
+            .lean();
 
         const totalUsers = await User.countDocuments(query);
 
