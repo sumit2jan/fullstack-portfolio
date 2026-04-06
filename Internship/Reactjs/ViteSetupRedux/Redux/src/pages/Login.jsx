@@ -2,22 +2,22 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as v from "yup";
 import { useFormik } from "formik";
-import api from "../api/axios";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { loginStart, loginSuccess, loginFailure } from "../redux/slice/authSlice";
+import { loginThunk } from "../redux/thunks/authThunk"; // ✅ IMPORT THUNK
 
 const Login = () => {
     const dispatch = useDispatch();
-     const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const { token, loading } = useSelector((state) => state.auth);
 
-    // useEffect(() => {
-    //     if (token) {
-    //         // navigate("/");
-    //     }
-    // }, [token, navigate]);
+    //  Auto redirect if already logged in
+    useEffect(() => {
+        if (token) {
+            navigate("/dashboard");
+        }
+    }, [token, navigate]);
 
     const formik = useFormik({
         initialValues: {
@@ -38,42 +38,28 @@ const Login = () => {
                 .required("Required"),
         }),
 
+        // UPDATED SUBMIT
         onSubmit: async (values, { resetForm, setSubmitting }) => {
-            dispatch(loginStart());
-
-            try {
-                const res = await api.post("/students/login", values);
-
-                const { student, token } = res.data.data;
-
-                // ✅ Redux login
-                dispatch(
-                    loginSuccess({
-                        user: student,
-                        token: token,
-                    })
-                );
-
+            const resultAction = await dispatch(loginThunk(values));
+            resetForm();
+            //  SUCCESS CASE
+            if (loginThunk.fulfilled.match(resultAction)) {
                 toast.success("Login successful 🚀");
-
-                resetForm();
-                 navigate("/dashboard");
-
-            } catch (error) {
-                const err = error?.response?.data;
-
-                if (err?.isVerified === false) {
-                    dispatch(loginFailure("Account not verified"));
-                    toast.error("Account not verified. Please contact support.");
-                    return;
-                }
-
-                dispatch(loginFailure(err?.message || "Login failed"));
-                toast.error(err?.message || "Login failed");
-
-            } finally {
-                setSubmitting(false);
+                navigate("/dashboard");
             }
+
+            //  ERROR CASE
+            else {
+                const errorMessage = resultAction.payload;
+
+                if (errorMessage === "Account not verified") {
+                    toast.error("Account not verified. Please contact support.");
+                } else {
+                    toast.error(errorMessage || "Login failed");
+                }
+            }
+
+            setSubmitting(false);
         },
     });
 

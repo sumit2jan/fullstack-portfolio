@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
+import DataTable from "react-data-table-component/dist/index.es.js";    
 import api from "../api/axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -24,7 +24,7 @@ const Dashboard = () => {
         try {
             setLoading(true);
 
-            const res = await api.get("/students/admin/dashboard", {
+            const res = await api.get("/students/admin/dashboardRedux", {
                 params: {
                     page,
                     limit,
@@ -249,6 +249,7 @@ const Dashboard = () => {
                 }}
             />
         </div>
+       
     );
 };
 

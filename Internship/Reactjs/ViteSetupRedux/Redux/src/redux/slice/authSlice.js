@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { loginThunk } from "../thunks/authThunk";
 
-// ✅ Get data from localStorage (if exists)
 const userFromStorage = JSON.parse(localStorage.getItem("user"));
 const tokenFromStorage = localStorage.getItem("token");
 
@@ -15,37 +15,41 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-
-    loginSuccess: (state, action) => {
-      state.loading = false;
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-
-      // ✅ Store in localStorage
-      localStorage.setItem("user", JSON.stringify(action.payload.user));
-      localStorage.setItem("token", action.payload.token);
-    },
-
-    loginFailure: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.error = null;
 
-      // ✅ Clear localStorage
       localStorage.removeItem("user");
       localStorage.removeItem("token");
     },
   },
+
+  // THUNK HANDLING
+  extraReducers: (builder) => {
+    builder
+      // pending
+      .addCase(loginThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      // success
+      .addCase(loginThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+
+        // yha pe bhi hum token localstorage pe store kra sakte hai but hamne abhi yeh chiz thunk mai hi ki hai use.
+      })
+
+      // error
+      .addCase(loginThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;
