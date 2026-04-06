@@ -205,9 +205,6 @@ const createStudent = async (req, res) => {
 //     }
 // };
 
-
-
-
 const updateProfile = async (req, res) => {
     try {
         const paramId = req.params.id;

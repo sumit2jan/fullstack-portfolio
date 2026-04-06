@@ -103,8 +103,6 @@ const loginStudent = async (req, res) => {
     }
 };
 
-
-
 // verify after registration with otp
 const verifyOtp = async (req, res) => {
     try {

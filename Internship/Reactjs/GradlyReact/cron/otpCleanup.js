@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const Student = require("../models/student.model");
 
 // Har 1 minute chalega
-cron.schedule("* * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
     console.log("⏳ Running OTP cleanup...");
 
     try {

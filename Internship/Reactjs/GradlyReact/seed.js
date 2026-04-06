@@ -21,14 +21,14 @@ const runSeeder = async () => {
 
     const hashedPassword = await bcrypt.hash("test@1234", 10);
 
-    for (let i = 1; i <= 50; i++) {
+    for (let i = 1; i <= 100; i++) {
       const firstName = generateRandom(firstNames);
       const lastName = generateRandom(lastNames);
 
       const student = await Student.create({
         firstName,
         lastName,
-        email: `student${i}@test.com`,
+        email: `student${i}@yopmail.com`,
         password: hashedPassword,
         isVerified: true,
         otp: null,
@@ -52,7 +52,7 @@ const runSeeder = async () => {
       });
     }
 
-    console.log("✅ 50 Dummy Students Created Successfully");
+    console.log("✅ 100 Dummy Students Created Successfully");
     process.exit();
 
   } catch (error) {
