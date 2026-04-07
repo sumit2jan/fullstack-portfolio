@@ -1,12 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginThunk } from "../thunks/authThunk";
-
-const userFromStorage = JSON.parse(localStorage.getItem("user"));
-const tokenFromStorage = localStorage.getItem("token");
+import { loginThunk } from "./authThunk";
 
 const initialState = {
-  user: userFromStorage || null,
-  token: tokenFromStorage || null,
+  user: null,
+  token: null,
   loading: false,
   error: null,
 };
@@ -19,9 +16,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.error = null;
-
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
+      state.loading = false;
     },
   },
 
@@ -39,8 +34,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-
-        // yha pe bhi hum token localstorage pe store kra sakte hai but hamne abhi yeh chiz thunk mai hi ki hai use.
       })
 
       // error

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 //import { useAuth } from "../context/Authcontext";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../redux/slice/authSlice";
+import { logout } from "../redux/auth/authSlice";
 
 const Navbar = () => {
     const dispatch = useDispatch();

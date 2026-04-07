@@ -4,7 +4,7 @@ import * as v from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { loginThunk } from "../redux/thunks/authThunk"; // ✅ IMPORT THUNK
+import { loginThunk } from "../redux/auth/authThunk"; // ✅ IMPORT THUNK
 
 const Login = () => {
     const dispatch = useDispatch();

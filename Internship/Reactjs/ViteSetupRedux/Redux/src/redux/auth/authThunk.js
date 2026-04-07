@@ -9,10 +9,6 @@ export const loginThunk = createAsyncThunk(
 
       const { student, token } = res.data.data;
 
-      // store in localStorage
-      localStorage.setItem("user", JSON.stringify(student));
-      localStorage.setItem("token", token);
-
       return { user: student, token };
     } catch (error) {
       return rejectWithValue(
@@ -21,3 +17,4 @@ export const loginThunk = createAsyncThunk(
     }
   }
 );
+
