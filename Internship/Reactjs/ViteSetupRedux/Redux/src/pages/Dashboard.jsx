@@ -1,69 +1,70 @@
-import React, { useEffect, useState } from "react";
-import DataTable from "react-data-table-component/dist/index.es.js";    
-import api from "../api/axios";
+import React, { useEffect } from "react";
+import DataTable from "react-data-table-component/dist/index.es.js";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
+import {
+    setSearch,
+    setDebouncedSearch,
+    setPage,
+    setLimit,
+    setSort,
+    setGender,
+    setCountry,
+} from "../redux/dashBoard/dashboardSlice";
+
+import { fetchStudentsThunk } from "../redux/dashBoard/dashBoardThunk";
+
 const Dashboard = () => {
-    const [students, setStudents] = useState([]);
-    const [search, setSearch] = useState("");
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(5);
-    const [totalRows, setTotalRows] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [debouncedSearch, setDebouncedSearch] = useState("");
-    const [sortBy, setSortBy] = useState("createdAt");
-    const [order, setOrder] = useState("desc");
-    const [gender, setGender] = useState("");
-    const [country, setCountry] = useState("");
+    const dispatch = useDispatch();
+
+    const {
+        students,
+        loading,
+        totalRows,
+        page,
+        limit,
+        search,
+        debouncedSearch,
+        sortBy,
+        order,
+        gender,
+        country,
+    } = useSelector((state) => state.dashboard);
 
     const BASE_URL = "http://localhost:4000";
 
-    // 🔥 Fetch Students
-    const getStudents = async () => {
-        try {
-            setLoading(true);
-
-            const res = await api.get("/students/admin/dashboardRedux", {
-                params: {
-                    page,
-                    limit,
-                    sortBy,
-                    order,
-                    search: debouncedSearch || undefined,
-                    gender: gender || undefined,
-                    country: country || undefined,
-                },
-            });
-
-            setStudents(res.data.data);
-            setTotalRows(res.data.totalStudents);
-        } catch (error) {
-            toast.error("Failed to fetch students");
-        } finally {
-            setLoading(false);
-        }
-    };
-
+    //  FETCH USING THUNK
     useEffect(() => {
-        getStudents();
-    }, [page, debouncedSearch, limit, sortBy, order, gender, country]);
+        dispatch(
+            fetchStudentsThunk({
+                page,
+                limit,
+                sortBy,
+                order,
+                search: debouncedSearch,
+                gender,
+                country,
+            })
+        );
+    }, [dispatch, page, limit, sortBy, order, debouncedSearch, gender, country]);
 
-    // Reset page when filters change
+    //  RESET PAGE WHEN FILTER CHANGES
     useEffect(() => {
-        setPage(1);
-    }, [debouncedSearch, gender, country]);
+        dispatch(setPage(1));
+    }, [dispatch, debouncedSearch, gender, country]);
 
-    // 🔥 Debounce Search
+    //  DEBOUNCE SEARCH
     useEffect(() => {
         const timer = setTimeout(() => {
-            setDebouncedSearch(search);
+            dispatch(setDebouncedSearch(search));
         }, 500);
 
         return () => clearTimeout(timer);
-    }, [search]);
+    }, [dispatch, search]);
 
-    // ❌ DELETE
+    // STILL LOCAL (we'll convert later if needed)
     const handleDeleteClick = async (user) => {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -75,21 +76,19 @@ const Dashboard = () => {
 
         if (result.isConfirmed) {
             try {
-                await api.delete(`/students/delete/${user._id}`);
+                await fetch(`/students/delete/${user._id}`, {
+                    method: "DELETE",
+                });
+
                 Swal.fire("Deleted!", "Student removed.", "success");
 
-                if (students.length === 1 && page > 1) {
-                    setPage(page - 1);
-                } else {
-                    getStudents();
-                }
+                dispatch(fetchStudentsThunk({ page, limit, sortBy, order, search: debouncedSearch, gender, country }));
             } catch (error) {
                 Swal.fire("Error!", "Delete failed.", "error");
             }
         }
     };
 
-    // ✅ VERIFY TOGGLE
     const handleToggleVerify = async (user) => {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -101,19 +100,21 @@ const Dashboard = () => {
 
         if (result.isConfirmed) {
             try {
-                await api.patch(`/students/verify/${user._id}`, {
-                    isVerified: !user.isVerified,
+                await fetch(`/students/verify/${user._id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ isVerified: !user.isVerified }),
                 });
 
                 Swal.fire("Updated!", "Verification changed.", "success");
-                getStudents();
+
+                dispatch(fetchStudentsThunk({ page, limit, sortBy, order, search: debouncedSearch, gender, country }));
             } catch (error) {
                 Swal.fire("Error!", "Update failed.", "error");
             }
         }
     };
 
-    // ✅ Columns (FIXED — no JSX headers)
     const columns = [
         {
             name: "Profile",
@@ -187,7 +188,7 @@ const Dashboard = () => {
     return (
         <div className="container mt-4">
             <h2>
-                Dashboard <span style={{ color: "#dc3545" }}>Students</span>
+                Dashboard <span style={{ color: "#dc3545" }}></span>
             </h2>
 
             {/* 🔍 Search */}
@@ -197,16 +198,16 @@ const Dashboard = () => {
                     placeholder="Search by name or email..."
                     className="form-control"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => dispatch(setSearch(e.target.value))}
                 />
             </div>
 
-            {/* 🔥 Filters OUTSIDE table */}
+            {/* Filters */}
             <div className="mb-3 d-flex gap-2">
                 <select
                     className="form-select"
                     value={gender}
-                    onChange={(e) => setGender(e.target.value)}
+                    onChange={(e) => dispatch(setGender(e.target.value))}
                 >
                     <option value="">All Gender</option>
                     <option value="Male">Male</option>
@@ -217,7 +218,7 @@ const Dashboard = () => {
                 <select
                     className="form-select"
                     value={country}
-                    onChange={(e) => setCountry(e.target.value)}
+                    onChange={(e) => dispatch(setCountry(e.target.value))}
                 >
                     <option value="">All Country</option>
                     <option value="India">India</option>
@@ -225,7 +226,7 @@ const Dashboard = () => {
                 </select>
             </div>
 
-            {/* 📊 Data Table */}
+            {/*  Data Table */}
             <DataTable
                 columns={columns}
                 data={students}
@@ -234,22 +235,25 @@ const Dashboard = () => {
                 paginationTotalRows={totalRows}
                 paginationPerPage={limit}
                 paginationRowsPerPageOptions={[5, 10, 20]}
-                onChangePage={(page) => setPage(page)}
+                onChangePage={(page) => dispatch(setPage(page))}
                 onChangeRowsPerPage={(newLimit, page) => {
-                    setLimit(newLimit);
-                    setPage(page);
+                    dispatch(setLimit(newLimit));
+                    dispatch(setPage(page));
                 }}
                 progressPending={loading}
                 highlightOnHover
                 persistTableHead
                 sortServer
                 onSort={(column, sortDirection) => {
-                    setSortBy(column.sortField || "createdAt");
-                    setOrder(sortDirection);
+                    dispatch(
+                        setSort({
+                            sortBy: column.sortField || "createdAt",
+                            order: sortDirection,
+                        })
+                    );
                 }}
             />
         </div>
-       
     );
 };
 

@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
 import Navbar from './components/Navbar';
 
 
@@ -14,9 +15,10 @@ function App() {
     <>
       <BrowserRouter>
         <ToastContainer position='top-right' autoClose={1000} />
-        <Navbar/>
+        <Navbar />
         <Routes>
-          <Route path='/' element={<Login />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/login' element={<Login />} />
           <Route path='/dashboard' element={<Dashboard />} />
         </Routes>
       </BrowserRouter>

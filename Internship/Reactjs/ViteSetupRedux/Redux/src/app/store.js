@@ -53,36 +53,3 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
-// import { configureStore, combineReducers } from "@reduxjs/toolkit";
-// import authReducer from "../redux/auth/authSlice";
-// import dashBoardReducer from "../redux/dashBoard/dashboardSlice";
-
-// import { persistReducer, persistStore } from "redux-persist";
-
-// //  Persist Config
-// const persistConfig = {
-//   key: "root",
-//   storage,
-//   whitelist: ["auth"], // only auth will persista
-// };
-
-// // Combine reducers
-// const rootReducer = combineReducers({
-//   auth: authReducer,
-//   dashboard: dashBoardReducer,
-// });
-
-// //  Wrap with persist
-// const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-// //  Store
-// export const store = configureStore({
-//   reducer: persistedReducer,
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware({
-//       serializableCheck: false, // required for persist
-//     }),
-// });
-
-// // Persistor
-// export const persistor = persistStore(store);

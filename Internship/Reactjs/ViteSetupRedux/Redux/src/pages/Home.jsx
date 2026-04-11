@@ -1,12 +1,12 @@
 import React from "react";
-// import { useNavigate } from "react-router-dom";
-// import { useAuth } from '../context/Authcontext'
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 
 
 const Home = () => {
-//   const { token } = useAuth();
-//   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { user, token } = useSelector((state) => state.auth);
 
   return (
     <div className="home-container d-flex align-items-center">
@@ -19,25 +19,29 @@ const Home = () => {
               Build Something <span className="text-danger">Amazing</span>
             </h1>
 
+            <h1 className="home-title">
+              Welcome to my app.
+            </h1>
+
             <p className="home-subtitle">
               A clean and modern React app with beautiful UI and smooth experience.
             </p>
 
-            {/* {token ? (
+            {token ? (
               <button
                 className="btn btn-danger mt-3 px-4"
                 onClick={() => navigate("/dashboard")}
               >
                 DashBoard
               </button>
-            ) : ( */}
+            ) : (
               <button
                 className="btn btn-danger mt-3 px-4"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/login")}
               >
-                Get Started
+                Login
               </button>
-            {/* )} */}
+            )}
 
 
           </div>

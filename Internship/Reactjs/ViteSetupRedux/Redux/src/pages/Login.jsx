@@ -5,12 +5,13 @@ import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { loginThunk } from "../redux/auth/authThunk"; // ✅ IMPORT THUNK
+import { authSelector } from "../redux/auth/authSelectors";
 
 const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { token, loading } = useSelector((state) => state.auth);
+    const { token, loading } = useSelector(authSelector);
 
     //  Auto redirect if already logged in
     useEffect(() => {

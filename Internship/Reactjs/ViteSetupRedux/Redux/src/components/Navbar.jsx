@@ -24,7 +24,7 @@ const Navbar = () => {
 
                 {/* Logo */}
                 <Link className="navbar-brand fw-bold" to="/">
-                    My<span className="text-danger">App</span>
+                    <span className="text-danger">Gradly</span>
                 </Link>
 
                 {/* Mobile Toggle */}
@@ -62,8 +62,8 @@ const Navbar = () => {
 
                                 <li className="nav-item">
                                     <Link
-                                        className={`nav-link ${location.pathname === "/" ? "active-link" : ""}`}
-                                        to="/"
+                                        className={`nav-link ${location.pathname === "/login" ? "active-link" : ""}`}
+                                        to="/login"
                                     >
                                         Login
                                     </Link>
@@ -74,20 +74,20 @@ const Navbar = () => {
                         {/* If logged in */}
                         {token && (
                             <>
-                                <li className="nav-item">
+                                {/* <li className="nav-item">
                                     <Link
                                         className={`nav-link ${location.pathname === "/profile" ? "active-link" : ""}`}
                                         to="/profile"
                                     >
                                         Profile
                                     </Link>
-                                </li>
+                                </li> */}
                                 <li className="nav-item">
                                     <Link
-                                        className={`nav-link ${location.pathname === "/cat" ? "active-link" : ""}`}
-                                        to="/cat"
+                                        className={`nav-link ${location.pathname === "/dashboard" ? "active-link" : ""}`}
+                                        to="/dashboard"
                                     >
-                                        Animations
+                                        Dashoard
                                     </Link>
                                 </li>
                                 <li className="nav-item d-flex align-items-center me-2">

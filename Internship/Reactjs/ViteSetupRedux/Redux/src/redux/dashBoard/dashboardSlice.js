@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { fetchStudentsThunk } from "./dashBoardThunk";
 
 const initialState = {
   students: [],
@@ -26,27 +27,9 @@ const initialState = {
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
+
   reducers: {
-    // 🔄 Fetch Start
-    fetchStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-
-    // ✅ Fetch Success
-    fetchSuccess: (state, action) => {
-      state.loading = false;
-      state.students = action.payload.data;
-      state.totalRows = action.payload.total;
-    },
-
-    // ❌ Fetch Error
-    fetchFailure: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    // 🔍 Filters & Controls
+    // Filters & Controls
     setSearch: (state, action) => {
       state.search = action.payload;
     },
@@ -76,7 +59,7 @@ const dashboardSlice = createSlice({
       state.country = action.payload;
     },
 
-    // ✏️ Edit Modal
+    // Edit Modal
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload;
     },
@@ -85,12 +68,27 @@ const dashboardSlice = createSlice({
       state.isEditOpen = action.payload;
     },
   },
+
+  // THUNK HANDLING HERE
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchStudentsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchStudentsThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.students = action.payload.students;
+        state.totalRows = action.payload.totalRows;
+      })
+      .addCase(fetchStudentsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
 });
 
 export const {
-  fetchStart,
-  fetchSuccess,
-  fetchFailure,
   setSearch,
   setDebouncedSearch,
   setPage,
