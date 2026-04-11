@@ -1,6 +1,6 @@
 # Fullstack Portfolio
 
-A personal portfolio website for presenting my web development projects in one place. The site highlights interactive front-end work, small JavaScript games, backend practice projects, and internship assignments while keeping each project easy to open, play, and review.
+A personal portfolio website for presenting my web development projects in one place. The site highlights interactive front-end work, small JavaScript games, and backend practice projects while keeping each project easy to open, play, and review.
 
 ## Overview
 
@@ -32,22 +32,15 @@ fullstack-portfolio/
 |-- DrumKit/
 |-- DiceGame/
 |-- Backend/
-|-- Internship/
 |-- jQuery/
 `-- Web Design Agency Project/
 ```
 
-## How to Run
+## Live Site
 
-Open `index.html` directly in a browser.
+Visit the portfolio here:
 
-For the best local preview, you can also serve the folder with a simple static server:
-
-```bash
-npx serve .
-```
-
-Then open the local URL shown in the terminal.
+https://sumit2jan.github.io/fullstack-portfolio/
 
 ## Purpose
 
